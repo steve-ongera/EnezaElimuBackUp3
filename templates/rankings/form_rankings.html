@@ -1,0 +1,182 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="pagetitle mb-6">
+        <h1 class="text-2xl font-bold">Form-wise Student Rankings</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+                <li class="breadcrumb-item active">Form Rankings</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Filter Form -->
+    <form method="get" class="mb-4 p-4 bg-light rounded shadow-sm">
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label for="year" class="form-label">Year:</label>
+                <select name="year" id="year" class="form-select">
+                    {% for year in available_years %}
+                        <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                            {{ year }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <label for="term" class="form-label">Term:</label>
+                <select name="term" id="term" class="form-select">
+                    <option value="">All Terms</option>
+                    {% for term in available_terms %}
+                        <option value="{{ term }}" {% if term == selected_term %}selected{% endif %}>
+                            {{ term }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <label for="form" class="form-label">Form:</label>
+                <select name="form" id="form" class="form-select">
+                    <option value="">All Forms</option>
+                    {% for form in available_forms %}
+                        <option value="{{ form }}" {% if form == selected_form %}selected{% endif %}>
+                            {{ form }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    Filter
+                </button>
+            </div>
+        </div>
+    </form>
+    
+    <!-- Rankings Display -->
+    {% for term_ranking in rankings %}
+    <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4">{{ term_ranking.term }}</h2>
+        
+        <!-- Always show as a single list, regardless of form filter -->
+        <div class="overflow-x-auto shadow">
+            <table class="min-w-full bg-white border border-gray-300 table-compact">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <!-- Fixed columns -->
+                        <th class="sticky left-0 z-10 bg-gray-100 px-2 py-1 border min-w-[40px] text-xs">Rank</th>
+                        <th class="sticky left-[40px] z-10 bg-gray-100 px-2 py-1 border min-w-[80px] text-xs">Adm No.</th>
+                        <th class="sticky left-[120px] z-10 bg-gray-100 px-2 py-1 border min-w-[150px] text-xs">Name</th>
+                        {% if not selected_form %}
+                        <th class="sticky left-[270px] z-10 bg-gray-100 px-2 py-1 border min-w-[100px] text-xs">Class</th>
+                        {% else %}
+                        <th class="sticky left-[270px] z-10 bg-gray-100 px-2 py-1 border min-w-[80px] text-xs">Stream</th>
+                        {% endif %}
+                        <th class="px-2 py-1 border min-w-[70px] text-xs">Average</th>
+                        <th class="px-2 py-1 border min-w-[50px] text-xs">GPA</th>
+                        <th class="px-2 py-1 border min-w-[50px] text-xs">Grade</th>
+                        
+                        <!-- Dynamic subject columns -->
+                        {% with first_student=term_ranking.students.0 %}
+                            {% if first_student %}
+                                {% for cat in first_student.subjects %}
+                                    <th class="px-2 py-1 border min-w-[90px] text-xs whitespace-nowrap">
+                                        {{ cat.subject.name }}
+                                        <div class="text-xxs font-normal">Score (Grade)</div>
+                                    </th>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in term_ranking.students %}
+                    <tr class="{% cycle 'bg-white' 'bg-gray-50' %}">
+                        <!-- Fixed columns -->
+                        <td class="sticky left-0 z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-2 py-1 border text-center text-xs">
+                            {{ student.rank }}
+                        </td>
+                        <td class="sticky left-[40px] z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-2 py-1 border text-xs">
+                            {{ student.student.admission_number }}
+                        </td>
+                        <td class="sticky left-[120px] z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-2 py-1 border text-xs">
+                            {{ student.student.name }}
+                        </td>
+                        <td class="sticky left-[270px] z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-2 py-1 border text-xs">
+                            {% if student.student.current_class %}
+                                {% if not selected_form %}
+                                    {{ student.student.current_class.name }} - {{ student.student.current_class.stream }}
+                                {% else %}
+                                    {{ student.student.current_class.stream }}
+                                {% endif %}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td class="px-2 py-1 border text-center text-xs">{{ student.average_score }}%</td>
+                        <td class="px-2 py-1 border text-center text-xs">{{ student.grade_point_average }}</td>
+                        <td class="px-2 py-1 border text-center text-xs">{{ student.overall_grade }}</td>
+                        
+                        <!-- Dynamic subject columns -->
+                        {% for cat in student.subjects %}
+                            <td class="px-2 py-1 border text-center text-xs whitespace-nowrap">
+                                {{ cat.end_term }}% ({{ cat.letter_grade }})
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-8">
+        <p class="text-gray-500">No rankings available for the selected filters.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    /* Compact table style */
+    .table-compact {
+        table-layout: fixed;
+        font-size: 0.75rem;
+        line-height: 1.1;
+    }
+    
+    /* Extra small text */
+    .text-xxs {
+        font-size: 0.65rem;
+    }
+    
+    /* Custom scrollbar styles for better visibility */
+    .overflow-x-auto {
+        scrollbar-width: thin;
+        scrollbar-color: #CBD5E0 #EDF2F7;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-track {
+        background: #EDF2F7;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-thumb {
+        background-color: #CBD5E0;
+        border-radius: 4px;
+    }
+    
+    /* Ensure text doesn't wrap in cells */
+    table td, table th {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+{% endblock %}

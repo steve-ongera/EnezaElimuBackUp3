@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="col-12">
+    <div class="card">
+
+        <!-- Card Body -->
+        <div class="card-body">
+            <h5 class="card-title">Create  academic term</h5>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    {{ form.as_p }}
+                </div>
+
+                <button type="submit" class="btn btn-success">Save</button>
+                <a href="javascript:history.back()" class="btn btn-secondary">Cancel</a>
+
+            </form>
+
+        </div><!-- End Card Body -->
+
+    </div><!-- End Card -->
+</div><!-- End col-12 -->
+{% endblock %}

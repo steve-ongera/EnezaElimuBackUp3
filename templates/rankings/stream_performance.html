@@ -1,0 +1,121 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="pagetitle mb-6">
+        <h1 class="text-2xl font-bold">Stream Performance Analysis</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+                <li class="breadcrumb-item active">Stream Performance</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Filter Form -->
+    <form method="get" class="mb-4 p-4 bg-light rounded shadow-sm">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="year" class="form-label">Year:</label>
+                <select name="year" id="year" class="form-select">
+                    {% for year in available_years %}
+                        <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                            {{ year }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <label for="term" class="form-label">Term:</label>
+                <select name="term" id="term" class="form-select">
+                    <option value="">All Terms</option>
+                    {% for term in available_terms %}
+                        <option value="{{ term }}" {% if term == selected_term %}selected{% endif %}>
+                            {{ term }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-4 mb-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    Filter
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Performance Display -->
+    {% for term_data in analytics %}
+    <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">{{ term_data.term }}</h2>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full table-auto border-collapse text-sm">
+                <thead class="bg-white border-b">
+                    <tr>
+                        <th class="px-2 py-1 text-left w-16">Rank</th>
+                        <th class="px-2 py-1 text-left w-32">Stream</th>
+                        <th class="px-2 py-1 text-left w-20">Students</th>
+                        <th class="px-2 py-1 text-left w-24">Mean Points</th>
+                        <th class="px-2 py-1 text-left w-24">Mean Grade</th>
+                        
+                        {% for subject in subjects %}
+                            <th class="px-2 py-1 text-left w-32">
+                                {{ subject.name }}
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody class="text-gray-700">
+                    {% for stream_data in term_data.streams %}
+                    <tr class="{% cycle 'bg-white' 'bg-gray-50' %}">
+                        <td class="px-2 py-1 border-b text-center">{{ stream_data.rank }}</td>
+                        <td class="px-2 py-1 border-b">{{ stream_data.stream.name }} {{ stream_data.stream.stream }}</td>
+                        <td class="px-2 py-1 border-b text-center">{{ stream_data.total_students }}</td>
+                        <td class="px-2 py-1 border-b text-center">{{ stream_data.mean_points }}</td>
+                        <td class="px-2 py-1 border-b text-center">{{ stream_data.mean_grade }}</td>
+                        
+                        {% for subject in subjects %}
+                            <td class="px-2 py-1 border-b text-center whitespace-nowrap">
+                                {% for subj_data in stream_data.subjects %}
+                                    {% if subj_data.subject.id == subject.id %}
+                                        {{ subj_data.average_score }}% ({{ subj_data.letter_grade }}) - {{ subj_data.grade_points }} pts
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-8">
+        <p class="text-gray-500">No performance data available for the selected filters.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    table {
+        border-spacing: 0;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    th, td {
+        padding: 4px 8px;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    thead th {
+        background-color: #f9fafb;
+        font-size: 0.75rem;
+    }
+</style>
+{% endblock %}

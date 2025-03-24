@@ -1,0 +1,258 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ student.name }} - {{ year }} Annual Report</title>
+    <style>
+        @page {
+            size: a4 portrait;
+            margin: 1cm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 100px;
+            max-height: 100px;
+        }
+        .school-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .report-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .student-info {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .student-info td {
+            padding: 5px;
+        }
+        .label {
+            font-weight: bold;
+            width: 150px;
+        }
+        .summary-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        .term-section {
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+        .term-title {
+            background-color: #f2f2f2;
+            padding: 8px;
+            font-weight: bold;
+            border: 1px solid #ddd;
+        }
+        table.results {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        table.results th, table.results td {
+            border: 1px solid #ddd;
+            padding: 4px; /* Reduced from 8px to 4px */
+            text-align: left;
+            font-size: 11px; /* Reduced font size */
+            line-height: 1.2; /* Reduce line height */
+        }
+        
+        table.results th {
+            background-color: #f2f2f2;
+        }
+        .signature-section {
+            margin-top: 40px;
+        }
+        .signature {
+            width: 45%;
+            float: left;
+            border-top: 1px dotted #000;
+            padding-top: 5px;
+            margin-right: 5%;
+        }
+        .footer {
+            margin-top: 80px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+        }
+        .grade-key {
+            font-size: 10px;
+            margin-top: 20px;
+        }
+        .term-comparison {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .term-comparison th, .term-comparison td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="{{ school_logo }}" class="logo" alt="School Logo">
+        <div class="school-name">{{ school_name }}</div>
+        <div class="report-title">ANNUAL ACADEMIC REPORT - {{ year }}</div>
+    </div>
+    
+    <table class="student-info">
+        <tr>
+            <td class="label">Student Name:</td>
+            <td>{{ student.name }}</td>
+            <td class="label">Admission Number:</td>
+            <td>{{ student.admission_number }}</td>
+        </tr>
+        <tr>
+            <td class="label">Academic Year:</td>
+            <td>{{ year }}</td>
+            <td class="label">Generated On:</td>
+            <td>{{ generated_date }}</td>
+        </tr>
+    </table>
+    
+    <div class="summary-box">
+        <h3>Annual Summary</h3>
+        <table style="width: 100%">
+            <tr>
+                <td class="label">Year Average:</td>
+                <td>{{ year_average }}%</td>
+                <td class="label">Overall Grade:</td>
+                <td>{{ overall_grade }}</td>
+            </tr>
+            <tr>
+                <td class="label">Position:</td>
+                <td colspan="3">{{ position }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <h3>Term Comparison</h3>
+    <table class="term-comparison">
+        <thead>
+            <tr>
+                <th>Term</th>
+                {% for term_data in term_data_list %}
+                    <th>{{ term_data.term.name }}</th>
+                {% endfor %}
+                <th>Average</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Average Score</strong></td>
+                {% for term_data in term_data_list %}
+                    <td>{{ term_data.term_average }}%</td>
+                {% endfor %}
+                <td><strong>{{ year_average }}%</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Grade</strong></td>
+                {% for term_data in term_data_list %}
+                    <td>{{ term_data.overall_grade }}</td>
+                {% endfor %}
+                <td><strong>{{ overall_grade }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    {% for term_data in term_data_list %}
+        <div class="term-section">
+            <div class="term-title">{{ term_data.term.name }} Results</div>
+            <table class="results">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>CAT 1</th>
+                        <th>CAT 2</th>
+                        <th>CAT 3</th>
+                        <th>Average</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject_data in term_data.subjects %}
+                        <tr>
+                            <td>{{ subject_data.subject }}</td>
+
+                            <td>
+                                {% if subject_data.cat1 != 'N/A' %}
+                                    {{ subject_data.cat1|floatformat:2 }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if subject_data.cat2 != 'N/A' %}
+                                    {{ subject_data.cat2|floatformat:2 }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if subject_data.cat3 != 'N/A' %}
+                                    {{ subject_data.cat3|floatformat:2 }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if subject_data.average != 'N/A' %}
+                                    {{ subject_data.average|floatformat:2 }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+
+                            <td>{{ subject_data.grade }}</td>
+
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+    
+    <div class="grade-key">
+        <h4>Grade Key:</h4>
+        <p>A (80-100%) - First Class | B+ (70-79%) - First Class | B (65-69%) - Second Class Upper | 
+           C+ (55-59%) - Second Class Lower | C (50-54%) - Second Class Lower | D (40-49%) - Pass | F (0-39%) - Fail</p>
+    </div>
+    
+    <div class="signature-section">
+        <div class="signature">
+            Principal's Signature<br>
+            {{ principal_name }}
+        </div>
+        <div class="signature">
+            Parent's/Guardian's Signature
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+    
+    <div class="footer">
+        This is an official document of {{ school_name }}. This report was generated on {{ generated_date }}.
+    </div>
+</body>
+</html>

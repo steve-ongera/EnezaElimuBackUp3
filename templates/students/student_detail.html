@@ -1,0 +1,84 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="card">
+   <div class="card-body">
+       <div class="row">
+           <div class="col-md-4">
+               {% if student.profile_picture %}
+                   <img src="{{ doctor.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded">
+                {% else %}
+                   <img src="{% static 'assets/img/profile.png'%}" alt="Profile Picture" class="img-fluid rounded">   
+               {% endif %}
+           </div>
+           <div class="col-md-8">
+               <h2 class="card-title mb-4"> {{ student.name }}</h2>
+               
+               <div class="row mb-3">
+                   <div class="col-md-6">
+                       <h6 class="text-muted">Class</h6>
+                       {% if student.current_class %}
+                           <p>{{ student.current_class }}</p>
+                        {% else %}
+                             <p> Graduated</p>
+                        {% endif %}
+                       
+                   </div>
+                   <div class="col-md-6">
+                       <h6 class="text-muted">Reg Number</h6>
+                       <p>{{ student.admission_number }}</p>
+                   </div>
+               </div>
+
+               <div class="row mb-3">
+                   <div class="col-md-6">
+                       <h6 class="text-muted">Gender</h6>
+                       <p> {{ student.get_gender_display }}</p>
+                   </div>
+                   <div class="col-md-6">
+                       <h6 class="text-muted">Emergency Contact</h6>
+                       <p>{{ student.emergency_contact_name }} - {{ student.emergency_contact_phone }} ({{ student.emergency_contact_relationship }})</p>
+                   </div>
+               </div>
+
+               <div class="row mb-4">
+                   <div class="col-md-6">
+                       <h6 class="text-muted">Admission Date </h6>
+                       <p>{{ student.admission_date }}</p>
+                   </div>
+                   <div class="col-md-6">
+                       <h6 class="text-muted">Medical Conditions</h6>
+                       <p>{{ student.medical_conditions }}</p>
+                   </div>
+               </div>
+
+               {% if student.username %}
+                    {% if doctor.username in user_usernames %}
+                        <div class="mt-3">
+                            <a href="{% url 'create_chat' student.username %}" class="btn btn-outline-primary">
+                                <i class="bi bi-envelope"></i> Message {{ stedent.username }}
+                            </a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p>Cannot message this student as no username is set.</p>
+                {% endif %}
+
+               <div class="mt-4">
+                   <a href="{% url 'student_update' student.pk %}" class="btn btn-primary me-2">
+                       <i class="bi bi-pencil"></i> Edit
+                   </a>
+                   <a href="{% url 'student_progress' student.id %}" class="btn btn-primary me-2">
+                    <i class="bi bi-eye"></i> Academics
+                   </a>
+                   <a href="{% url 'students_list' %}" class="btn btn-secondary">
+                       <i class="bi bi-arrow-left"></i> Back to List
+                   </a>
+               </div>
+           </div>
+       </div>
+   </div>
+</div>
+
+{% endblock %}

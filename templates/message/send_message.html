@@ -1,0 +1,18 @@
+
+<div class="message-container">
+    <h2>Send a message to {{ receiver.username }}</h2>
+    
+    <form method="POST" action="{% url 'send_message' username=receiver.username %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="content">Message:</label>
+            <textarea id="content" name="content" class="form-control" rows="5" placeholder="Type your message here..." required></textarea>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Send</button>
+        </div>
+    </form>
+
+    <a href="{% url 'message_thread' receiver.username %}">Back to conversation</a>
+</div>
+

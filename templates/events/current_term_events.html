@@ -1,0 +1,37 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    {% if current_term %}
+        <h2 class="mb-4 text-primary">Events for {{ current_term.name }} {{ current_term.year }}</h2>
+
+        {% if events %}
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ event.title }}</td>
+                        <td>{{ event.description|default:"-" }}</td>
+                        <td>{{ event.date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="alert alert-info">No events scheduled for the current term.</p>
+        {% endif %}
+
+    {% else %}
+        <p class="alert alert-warning">No current term is set.</p>
+    {% endif %}
+</div>
+{% endblock %}

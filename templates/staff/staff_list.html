@@ -1,0 +1,64 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+<div class="pagetitle">
+    <h1>Staff Members</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item">Staff</li>
+            <li class="breadcrumb-item active"><a href="{% url 'create_staff' %}">Add Staff Member</a></li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Staff List</h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped datatable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Position</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Department</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for staff in staff_members %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'staff_detail' staff.pk %}">
+                                            {{ staff.first_name }} {{ staff.last_name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ staff.position }}</td>
+                                    <td>{{ staff.phone }}</td>
+                                    <td>{{ staff.email }}</td>
+                                    <td>{{ staff.department }}</td>
+                                    <td><a href="{% url 'update_staff' staff.pk %}">Edit</a></td>
+                                    <td><a href="{% url 'delete_staff' staff.pk %}">Delete</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- End Table with stripped rows -->
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

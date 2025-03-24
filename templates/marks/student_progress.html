@@ -1,0 +1,147 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<style>
+    /* Tiny Table Styling */
+    .tiny-table th,
+    .tiny-table td {
+        padding: 4px 6px !important;
+        font-size: 0.65rem !important;
+    }
+
+    .tiny-table th {
+        font-weight: 600;
+    }
+
+    .tiny-table thead {
+        background-color: #f8f9fa;
+    }
+
+    .tiny-link {
+        font-size: 0.55rem;
+    }
+
+    .tiny-heading {
+        font-size: 1rem;
+    }
+
+    .tiny-subheading {
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="col-12">
+    <div class="card overflow-auto">
+
+        <!-- Card Body -->
+        <div class="card-body pb-0">
+            <h5 class="card-title tiny-heading">Progress Report for {{ student.name }}</h5>
+            <p class="tiny-subheading">Admission Number: {{ student.admission_number }}</p>
+            <p class="tiny-subheading">Current Class: {{ student.current_class }}</p>
+
+            <!-- Year Tabs -->
+            <div class="mb-3">
+                {% for year in years %}
+                <a href="{% url 'student_progress' student.id %}?year={{ year }}"
+                   class="btn btn-sm {% if year|stringformat:'i' == selected_year|stringformat:'i' %}btn-primary{% else %}btn-outline-secondary{% endif %} tiny-link me-1 mb-1">
+                    {{ year }}
+                </a>
+                {% endfor %}
+            </div>
+
+            <!-- Year Summary -->
+            {% if has_all_terms and year_analysis %}
+            <div class="card mb-3">
+                <div class="card-body bg-light">
+                    <h6 class="tiny-heading">{{ selected_year }} Academic Year Summary</h6>
+                    <p class="mb-1 tiny-subheading">Year Average: <strong>{{ year_analysis.year_average }}</strong></p>
+                    <p class="mb-1 tiny-subheading">Overall Grade: <strong>{{ year_analysis.overall_grade }}</strong></p>
+                    <p class="mb-2 tiny-subheading">Position: <strong>{{ year_analysis.position }}</strong></p>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered tiny-table">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th class="text-center">Year Average</th>
+                                    <th class="text-center">Grade</th>
+                                    <th class="text-center">Standing</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subject in year_analysis.subjects %}
+                                <tr>
+                                    <td>{{ subject.subject.name }}</td>
+                                    <td class="text-center">{{ subject.average }}</td>
+                                    <td class="text-center">{{ subject.grade }}</td>
+                                    <td class="text-center">{{ subject.position }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Term-wise Performance -->
+            {% if progress_data %}
+                {% for term_data in progress_data %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="tiny-heading">{{ term_data.term.name }} {{ term_data.term.year }}</h6>
+                        <p class="mb-1 tiny-subheading">Term Average: <strong>{{ term_data.term_average }}</strong></p>
+                        <p class="mb-1 tiny-subheading">Overall Grade: <strong>{{ term_data.overall_grade }}</strong></p>
+                        <p class="mb-2 tiny-subheading">Position: <strong>{{ term_data.position }}</strong></p>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered tiny-table">
+                                <thead>
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th class="text-center">CAT 1</th>
+                                        <th class="text-center">CAT 2</th>
+                                        <th class="text-center">CAT 3</th>
+                                        <th class="text-center">Average</th>
+                                        <th class="text-center">Grade</th>
+                                        <th class="text-center">Points</th>
+                                        <th class="text-center">Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for subject in term_data.subjects %}
+                                    <tr>
+                                        <td>
+                                            {% if subject.cat_id %}
+                                                <a href="{% url 'cat_detail' subject.cat_id %}" class="text-primary tiny-link">
+                                                    {{ subject.subject.name }}
+                                                </a>
+                                            {% else %}
+                                                {{ subject.subject.name }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">{{ subject.cat1|floatformat:2 }}</td>
+                                        <td class="text-center">{{ subject.cat2|floatformat:2 }}</td>
+                                        <td class="text-center">{{ subject.cat3|floatformat:2 }}</td>
+                                        <td class="text-center">{{ subject.average|floatformat:2 }}</td>
+                                        <td class="text-center">{{ subject.grade }}</td>
+                                        <td class="text-center">{{ subject.grade_points }}</td>
+                                        <td class="text-center">{{ subject.position }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted text-center mt-4">No data available for {{ selected_year }}.</p>
+            {% endif %}
+
+        </div><!-- End Card Body -->
+
+    </div><!-- End Card -->
+</div><!-- End col-12 -->
+
+{% endblock %}

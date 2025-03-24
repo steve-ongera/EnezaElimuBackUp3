@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ subject.name }}</h2>
+<p>Code: {{ subject.code }}</p>
+<a href="{% url 'subject_update' subject.pk %}">Edit</a> |
+<a href="{% url 'subject_delete' subject.pk %}">Delete</a> |
+<a href="{% url 'subject_list' %}">Back to List</a>
+{% endblock %}

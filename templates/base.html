@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My School App{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Optional: Include other common CSS/JS libraries you might need -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+    
+</head>
+<body>
+
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#">CATs</a></li>
+                <li><a href="#">Classes</a></li>
+                
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Content specific to the page will be added here -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 School App</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+  <div class="pagetitle">
+    <h1>Revision Resources</h1>
+    <nav>
+      <ol class="breadcrumb">
+        {% if request.user.is_staff %}
+        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+        {% else %}
+        <li class="breadcrumb-item"><a href="{% url 'student_dashboard' %}">Home</a></li>
+        {% endif %}
+        <li class="breadcrumb-item active">Resources</li>
+      </ol>
+    </nav>
+  </div>
+
+  <section class="section">
+    <div class="row">
+      <div class="col-12 mb-3">
+        {% if request.user.is_staff %}
+        <a href="{% url 'add_resource' %}" class="btn btn-success">Add New Resource</a>
+      
+       
+        
+        {% endif %}
+        
+      </div>
+
+      <!-- Search Bar -->
+      <div class="col-12 mb-3">
+        <input type="text" id="search-input" class="form-control" placeholder="Search Resources..." autocomplete="off">
+      </div>
+
+      <div id="resource-list" class="row">
+        {% for resource in resources %}
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ resource.title }}</h5>
+                <p>{{ resource.description|truncatewords:20 }}</p>
+                <a href="{% url 'resource_detail' resource.id %}" class="btn btn-primary">View Resource</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Event listener for search input
+    document.getElementById('search-input').addEventListener('keyup', function() {
+      var query = this.value;
+
+      // Send AJAX request to filter resources
+      fetch("{% url 'resource_search' %}?query=" + query, {
+        method: "GET",
+      })
+      .then(response => response.json())
+      .then(data => {
+        var resourceList = document.getElementById('resource-list');
+        resourceList.innerHTML = "";  // Clear the existing list
+
+        // Loop through the results and create the resource cards
+        data.resources.forEach(function(resource) {
+          var resourceHTML = `
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">${resource.title}</h5>
+                  <p>${resource.description}</p>
+                  <a href="${resource.url}" class="btn btn-primary">View Resource</a>
+                </div>
+              </div>
+            </div>
+          `;
+          resourceList.innerHTML += resourceHTML;
+        });
+      });
+    });
+  </script>
+
+{% endblock %}

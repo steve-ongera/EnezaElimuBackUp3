@@ -1,0 +1,680 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+  .image-container {
+    position: relative;
+}
+
+.icon-edit, .icon-delete {
+    font-size: 1.2rem;  /* Smaller size for both icons */
+    cursor: pointer;
+}
+
+.icon-edit {
+    position: absolute;
+    top: 5px;    /* Adjusted top value to give space from the top */
+    right: 5px;  /* Adjusted right value to place it near the edge */
+    padding: 5px;
+}
+
+.icon-delete {
+    position: absolute;
+    top: 30px;   /* Move the trash icon below the pencil icon */
+    right: 5px;  /* Same right value for consistent alignment */
+    padding: 5px;
+}
+
+.activity-wrapper {
+  overflow-x: auto; /* Allow horizontal scrolling */
+  -webkit-overflow-scrolling: touch; /* For smoother scrolling on mobile */
+  width: 100%; /* Ensure full width */
+}
+
+.activity {
+  display: flex; /* Align activity items horizontally */
+  flex-direction: column; /* Arrange the items in a column */
+  min-width: 100%; /* Ensure the content fits within the width */
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  margin: 5px 0; /* Space between activity items */
+  min-width: 300px; /* Set minimum width for items */
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflowing text */
+}
+
+.activity-item .activity-content {
+  text-overflow: ellipsis; /* Ensure overflowing text is truncated */
+  max-width: calc(100% - 50px); /* Adjust based on content width */
+}
+
+.activity-item .activite-label {
+  width: 100px; /* Set a fixed width for the label */
+}
+
+.activity-item .activity-badge {
+  margin-left: 10px; /* Add space between the badge and content */
+}
+
+
+
+</style>
+<div class="pagetitle">
+    <h1>Dashboard</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard'%}">Home</a></li>
+        <li class="breadcrumb-item active">Dashboard</li>
+        <li class="breadcrumb-item"> {{ request.user.username }}</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section dashboard">
+    <div class="row">
+
+
+      <!-- Left side columns -->
+      <div class="col-lg-8">
+        <div class="row">
+
+          <!-- Sales Card -->
+          <div class="col-xxl-4 col-md-6">
+            <div class="card info-card sales-card">
+
+
+
+              <div class="card-body">
+                <h5 class="card-title">Students </h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-mortarboard"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ student_count }}</h6>
+                    <span class="text-success small pt-1 fw-bold"></span> <span class="text-muted small pt-2 ps-1"></span>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div><!-- End Sales Card -->
+
+          <!-- Revenue Card -->
+          <div class="col-xxl-4 col-md-6">
+            <div class="card info-card revenue-card">
+
+             
+              <div class="card-body">
+                <h5 class="card-title">Teachers </h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-person"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ teacher_count }}</h6>
+                    
+                  
+                   
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div><!-- End Revenue Card -->
+
+         <!-- Randomized Patients -->
+          <div class="col-xxl-4 col-md-6">
+            <div class="card info-card revenue-card">
+
+              
+              <div class="card-body">
+                <h5 class="card-title">Staffs </h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-person-check text-white"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ staff_count }}</h6>
+                    
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div><!-- End Revenue Card -->
+
+
+          <!-- UnRandomized Patients -->
+          <div class="col-xxl-6 col-md-6">
+            <div class="card info-card revenue-card">
+
+              
+
+              <div class="card-body">
+                <h5 class="card-title">Non-Staff</h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning" >
+                    <i class="bi bi-person-dash text-white"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ nonstaff_count }}</h6>
+                    
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div><!-- End Unrandomized Card -->
+
+         
+          <!-- Customers Card -->
+          <div class="col-xxl-6 col-xl-12">
+
+            <div class="card info-card customers-card">
+
+              
+
+              <div class="card-body">
+                <h5 class="card-title">Active Students </h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-people"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ active_student_count }}</h6>
+                    <span class="text-danger small pt-1 fw-bold"></span> <span class="text-muted small pt-2 ps-1"></span>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div><!-- End summary  Card -->
+
+          <!-- population graph -->
+          <div class="col-12">
+            <div class="card">
+
+              <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+
+                  <li><a class="dropdown-item" href="#">Today</a></li>
+                  <li><a class="dropdown-item" href="#">This Month</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>
+
+              <div class="card-body">
+                <h5 class="card-title">Population Distribution<span id="currentYear"></span></h5>
+            
+                <!-- Yearly Admissions Chart -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h6 class="text-xl font-bold mb-4">Yearly Admissions</h6>
+                    <canvas id="yearlyAdmissionsChart"></canvas>
+                </div>
+
+                <!-- End Line Chart -->            
+               </div>
+            </div>
+          </div><!-- End Reports -->
+            
+
+          <!-- Student Population Trends Reports -->
+          <div class="col-12">
+            <div class="card">
+
+              <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+
+                  <li><a class="dropdown-item" href="#">Today</a></li>
+                  <li><a class="dropdown-item" href="#">This Month</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>
+
+              <div class="card">
+                  <div class="card-body">
+                        <h5 class="card-title">Student Population Trends <span>| {{ current_year }}</span></h5>
+
+                       
+
+                        <!-- Cumulative Growth Chart -->
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h6 class="text-xl font-bold mb-4">Cumulative Growth</h6>
+                            <canvas id="cumulativeGrowthChart"></canvas>
+                        </div>
+                
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+                        <script>
+                            // Parse data from Django
+                            const years = {{ years|safe }};
+                            const counts = {{ counts|safe }};
+                            const cumulativeCounts = {{ cumulative_counts|safe }};
+                            const growthRates = {{ growth_rates|safe }};
+                            
+                            // Yearly Admissions Chart
+                            new Chart(document.getElementById('yearlyAdmissionsChart'), {
+                                type: 'bar',
+                                data: {
+                                    labels: years,
+                                    datasets: [{
+                                        label: 'New Students',
+                                        data: counts,
+                                        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                                        borderColor: 'rgb(59, 130, 246)',
+                                        borderWidth: 1
+                                    }, {
+                                        label: 'Growth Rate (%)',
+                                        data: growthRates,
+                                        type: 'line',
+                                        borderColor: 'rgb(220, 38, 38)',
+                                        yAxisID: 'y1'
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: 'Number of Students'
+                                            }
+                                        },
+                                        y1: {
+                                            position: 'right',
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: 'Growth Rate (%)'
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            // Cumulative Growth Chart
+                            new Chart(document.getElementById('cumulativeGrowthChart'), {
+                                type: 'line',
+                                data: {
+                                    labels: years,
+                                    datasets: [{
+                                        label: 'Total Students',
+                                        data: cumulativeCounts,
+                                        borderColor: 'rgb(16, 185, 129)',
+                                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                        fill: true
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: 'Total Students'
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+              </div>
+            </div>
+             
+
+          <!-- Recent Sales -->
+          <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+
+              <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+
+                  <li><a class="dropdown-item" href="#">Today</a></li>
+                  <li><a class="dropdown-item" href="#">This Month</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>
+              
+            
+              <div class="card-body">
+                <h5 class="card-title">Students<span>| Today</span></h5>
+
+                <table class="table table-borderless datatable">
+                  <thead>
+                    <tr>
+                      <th scope="col">Names</th>
+                      <th scope="col">Registration</th>
+                      <th scope="col">Class</th>
+                      <th scope="col">Address</th>
+                      <th scope="col">DOB</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for student in students %}
+                    <tr>
+                      <th scope="row"><a href="{% url 'student_detail' student.pk %}">{{ student.name }}</a></th>
+                      <td>{{ student.admission_number}}</td>
+                      <td><a href="#" class="text-primary">{{ student.current_class}}</a></td>
+                      <td>{{ student.address}}</td>
+                      <td>{{ student.date_of_birth}}</td>
+                    </tr>
+
+                   {% endfor  %}
+                            
+                  </tbody>
+                </table>
+
+              </div>
+
+            </div>
+          </div>
+          
+        
+          <!-- End county ranking-->
+
+          <!-- Top 10 Students -->
+          <div class="col-12">
+            <div class="card top-selling overflow-auto">
+
+              <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+
+                  <li><a class="dropdown-item" href="#">Today</a></li>
+                  <li><a class="dropdown-item" href="#">This Month</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>
+
+              <div class="card-body pb-0">
+                <h5 class="card-title">Teachers <span>| Today</span></h5>
+
+                <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th scope="col">Profile</th>
+                        <th scope="col"> name</th>
+                        <th scope="col">phone</th>
+                        <th scope="col"> ID No</th>
+                        <th scope="col">Email</th>
+                        <th scope="col"> Address</th>
+                
+                    </tr>
+                  </thead>
+                  <tbody>
+                    
+                    {% for teacher in teachers%}
+                    <tr>
+                      <th scope="row"><a  href="{% url 'teacher_detail' teacher.id %}"><img style="width: 40px ; height: 40px" src="{% static 'assets/img/profile.png'%}" alt=""></a></th>
+                      <td>{{ teacher.first_name }} {{ patient.last_name }}</td>
+                      <td>{{ teacher.phone }}</td>
+                      <td>{{ teacher.id_number }}</td>
+                      <td>{{ teacher.email }}</td>
+                      <td>{{ teacher.address}}</td>
+                     
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+
+              </div>
+
+            </div>
+          </div><!-- End Top Selling -->
+
+        </div>
+      </div><!-- End Left side columns -->
+
+      <!-- Right side columns -->
+      <div class="col-lg-4">
+
+        <!-- Recent Activity -->
+        <div class="card">
+          <div class="filter">
+            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+              <li class="dropdown-header text-start">
+                <h6>Filter</h6>
+              </li>
+
+              <li><a class="dropdown-item" href="#">Today</a></li>
+              <li><a class="dropdown-item" href="#">This Month</a></li>
+              <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
+          </div>
+
+          <div class="card-body">
+            <h5 class="card-title">Recent Activity <span>| Today</span></h5>
+
+            <div class="activity-wrapper">
+              <div class="activity">
+                {% for activity in recent_activities %}
+                  <div class="activity-item d-flex">
+                    <div class="activite-label">{{ activity.timestamp|date:"g:ia" }}</div>
+                    <i class='bi bi-circle-fill activity-badge text-success align-self-start'></i>
+                    <div class="activity-content">
+                      {{ activity.user.username }} <a href="#" class="fw-bold text-dark">{{ activity.action }}</a> at {{ activity.timestamp|date:"M d, Y H:i" }}
+                    </div>
+                  </div><!-- End activity item-->
+                {% endfor %}
+              </div>
+            </div>
+            
+
+            
+          </div>
+        </div><!-- End Recent Activity -->
+
+        
+
+        <!-- population analysis -->
+        <div class="card">
+          <div class="filter">
+            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+              <li class="dropdown-header text-start">
+                <h6>Filter</h6>
+              </li>
+
+              <li><a class="dropdown-item" href="#">Today</a></li>
+              <li><a class="dropdown-item" href="#">This Month</a></li>
+              <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
+          </div>
+
+          <div class="card-body pb-0">
+            <h5 class="card-title">Personnel Analysis <span>| Today</span></h5>
+        
+            <div id="personnelDonutChart" style="min-height: 400px;" class="echart"></div>
+        
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    const personnelData = JSON.parse('{{ data|safe }}');
+                    
+                    echarts.init(document.querySelector("#personnelDonutChart")).setOption({
+                        tooltip: {
+                            trigger: 'item'
+                        },
+                        legend: {
+                            top: '5%',
+                            left: 'center'
+                        },
+                        series: [{
+                            name: 'Personnel Distribution',
+                            type: 'pie',
+                            radius: ['40%', '70%'],
+                            avoidLabelOverlap: false,
+                            label: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    fontSize: '18',
+                                    fontWeight: 'bold'
+                                }
+                            },
+                            labelLine: {
+                                show: false
+                            },
+                            data: personnelData
+                        }]
+                    });
+                });
+            </script>
+        </div>
+        
+        </div><!-- End most common diseases -->
+
+
+        <div class="card">
+          <div class="filter">
+            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+              <li class="dropdown-header text-start">
+                <h6>Filter</h6>
+              </li>
+              <li><a class="dropdown-item" href="#">Today</a></li>
+              <li><a class="dropdown-item" href="#">This Month</a></li>
+              <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
+          </div>
+        
+          <div class="card-body pb-0">
+            <h5 class="card-title">Student Admission by Year <span>| All Time</span></h5>
+        
+            <div id="studentYearlyDonutChart" style="min-height: 400px;" class="echart"></div>
+        
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    const yearlyData = JSON.parse('{{ student_yearly_data|safe }}');
+                    
+                    echarts.init(document.querySelector("#studentYearlyDonutChart")).setOption({
+                        tooltip: {
+                            trigger: 'item'
+                        },
+                        legend: {
+                            top: '5%',
+                            left: 'center'
+                        },
+                        series: [{
+                            name: 'Students by Year',
+                            type: 'pie',
+                            radius: ['40%', '70%'],
+                            avoidLabelOverlap: false,
+                            label: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    fontSize: '18',
+                                    fontWeight: 'bold'
+                                }
+                            },
+                            labelLine: {
+                                show: false
+                            },
+                            data: yearlyData
+                        }]
+                    });
+                });
+            </script>
+        </div>
+      </div>
+
+        <!-- News & Updates  -->
+        <div class="card">
+          <div class="filter">
+            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+              <li class="dropdown-header text-start">
+                <h6>Filter</h6>
+              </li>
+
+              <li><a class="dropdown-item" href="#">Today</a></li>
+              <li><a class="dropdown-item" href="#">This Month</a></li>
+              <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
+          </div>
+
+          <div class="card-body pb-0">
+            <h5 class="card-title">News &amp; Updates <span>| Today</span></h5>
+            
+            <div class="news">
+              
+              
+              {% for news in news_updates %}
+              <div class="post-item clearfix">
+                {% if news.image %}
+                  <div class="image-container position-relative">
+                    <img src="{{ news.image.url }}" alt="" class="img-fluid">
+                    
+                    <!-- Edit and Delete Icons -->
+                    {% if news.created_by == request.user %}
+                      
+                      <a href="{% url 'news_delete' news.pk %}" class="icon-delete " style="font-size: 1.1rem;">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                {% if news.created_by == request.user %}
+                <h4><a href="{% url 'news_edit' news.pk %}">{{ news.title }}</a></h4>
+                 {% else %}
+                 <h4>{{ news.title }}</h4>
+                {% endif %}
+                <p>{{ news.description|truncatechars:100 }}</p>
+              </div>
+            {% endfor %}
+            
+
+
+            </div><!-- End sidebar recent posts-->
+
+          </div>
+        </div><!-- End News & Updates -->
+
+      </div><!-- End Right side columns -->
+
+    </div>
+  </section>
+
+</div>
+{% endblock %}

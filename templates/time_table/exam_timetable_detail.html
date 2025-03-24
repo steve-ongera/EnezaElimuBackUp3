@@ -1,0 +1,102 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+
+<style>
+  #pdf-preview {
+    text-align: center;
+  }
+
+  #pdf-canvas {
+    max-width: 100%;
+    width: 100%; /* Make sure the canvas takes up 100% of the available space */
+    height: auto; /* Maintain aspect ratio */
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    #pdf-canvas {
+      max-width: 90%; /* Limit the canvas size on smaller screens */
+    }
+  }
+
+  @media (max-width: 576px) {
+    #pdf-canvas {
+      max-width: 80%; /* Further reduce size on very small screens */
+    }
+  }
+</style>
+
+
+  <div class="pagetitle">
+    <h1>Exam Timetable Details</h1>
+    <nav>
+      <ol class="breadcrumb">
+        {% if request.user.is_staff %}
+        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+        {% else %}
+        <li class="breadcrumb-item"><a href="{% url 'student_dashboard' %}">Home</a></li>
+        {% endif %}
+        <li class="breadcrumb-item"><a href="{% url 'timetable_list' %}">Timetables</a></li>
+        <li class="breadcrumb-item active">Details</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Timetable for {{ timetable.session.year }}</h5>
+
+            <p><strong>Name:</strong> {{ timetable.name }}</p>
+            <p><strong>Start Date:</strong> {{ timetable.start_date }}</p>
+            <p><strong>End Date:</strong> {{ timetable.end_date }}</p>
+            
+            {% if timetable.time_table_pdf %}
+              <p><strong>Download PDF:</strong> 
+                <a href="{{ timetable.time_table_pdf.url }}" target="_blank" class="btn btn-primary">Download</a>
+              </p>
+
+              <!-- PDF Preview -->
+              <div id="pdf-preview">
+                <canvas id="pdf-canvas"></canvas>
+              </div>
+
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+              <script>
+                const pdfUrl = "{{ timetable.time_table_pdf.url }}"; // Get the URL of the PDF
+                const pdfCanvas = document.getElementById("pdf-canvas");
+                const ctx = pdfCanvas.getContext("2d");
+
+                // Fetch the PDF document
+                pdfjsLib.getDocument(pdfUrl).promise.then(pdfDoc => {
+                  // Fetch the first page of the PDF
+                  pdfDoc.getPage(1).then(page => {
+                    const scale = 2.0;  // Set scale for better clarity (2.0 means double resolution)
+                    const viewport = page.getViewport({ scale: scale });
+                    pdfCanvas.width = viewport.width;
+                    pdfCanvas.height = viewport.height;
+
+                    // Render the page to the canvas
+                    page.render({
+                      canvasContext: ctx,
+                      viewport: viewport
+                    });
+                  });
+                }).catch(error => {
+                  console.error('Error loading PDF: ', error);
+                });
+              </script>
+            {% else %}
+              <p>No timetable PDF uploaded</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

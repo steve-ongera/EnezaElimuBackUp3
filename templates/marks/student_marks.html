@@ -1,0 +1,25 @@
+<h1>Marks for {{ student.name }} - {{ term.name }} {{ term.year }}</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>CAT 1</th>
+            <th>CAT 2</th>
+            <th>CAT 3</th>
+            <th>End Term</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cat in cats %}
+            <tr>
+                <td>{{ cat.subject.name }}</td>
+                <td>{{ cat.cat1 }}</td>
+                <td>{{ cat.cat2 }}</td>
+                <td>{{ cat.cat3 }}</td>
+                <td>{{ cat.end_term }}</td>
+                <td>{{ cat.total_marks }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,433 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Chat Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e5ddd5;
+        }
+        .chat-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .chat-header {
+            background-color: #075e54;
+            color: white;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+        }
+        .chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .chat-header-right {
+            display: flex;
+            align-items: center;
+        }
+        .chat-header-right svg {
+            margin-left: 15px;
+            cursor: pointer;
+        }
+        .chat-body {
+            padding: 10px;
+            background-image: url('https://web.whatsapp.com/img/bg-chat-tile-light_04fcacde539c58cca6745483d4858c52.png');
+            background-repeat: repeat;
+            height: 570px;
+            overflow-y: auto;
+        }
+        .message {
+            max-width: 80%;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            border-radius: 7px;
+            position: relative;
+            word-wrap: break-word;
+        }
+        .received {
+            background-color: #fff;
+            float: left;
+            clear: both;
+        }
+        .sent {
+            background-color: #dcf8c6;
+            float: right;
+            clear: both;
+        }
+        .time {
+            font-size: 0.75em;
+            color: #999;
+            margin-top: 5px;
+            display: block;
+        }
+        .chat-footer {
+            background-color: #f0f0f0;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .chat-footer input {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+        .chat-footer button {
+            background-color: #075e54;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .chat-footer svg {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        /* Messages container */
+        .messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            background-color: #e5ddd5;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 20px;
+            max-width: 75%;
+            word-wrap: break-word;
+            position: relative;
+            font-size: 16px;
+        }
+
+        /* Sent messages (by the logged-in user) */
+        .message.sent {
+            background-color: #dcf8c6;
+            align-self: flex-end;
+            text-align: right;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Received messages */
+        .message.received {
+            background-color: #fff;
+            align-self: flex-start;
+            text-align: left;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .message p {
+            margin: 0;
+            padding: 5px 0;
+        }
+
+        .message small {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .icon-button {
+            margin-right: 10px;
+            cursor: pointer;
+            color: #075e54;
+        }
+        .icon-button svg {
+            width: 24px;
+            height: 24px;
+            
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column; /* Stack the username and last seen vertically */
+        }
+        
+        .user-info h2 {
+            margin: 0;
+            font-size: 1.5em; /* Adjust username size */
+        }
+        
+        .user-info small {
+            font-size: 0.8em; /* Make the last seen text smaller */
+            color: #d3d3d3;   /* Optional: Change the color to gray */
+            margin-top: 2px;  /* Space between username and last seen */
+        }
+
+
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #fff;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 5px;
+        }
+        
+        .dropdown-menu a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        
+        .dropdown-menu a:hover {
+            background-color: #ddd;
+        }
+        
+        .dropdown-menu a:last-child {
+            border-bottom: none;
+        }
+        
+        .show {
+            display: block;
+        }
+        
+           
+        .username {
+            max-width: 150px;  /* Set a max-width depending on your layout */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 24px;  /* Adjust based on your design */
+        }
+        
+        .arrow-icon {
+            margin-right: 2px;  /* Adds space between the arrow and the profile image */
+            cursor: pointer;
+        }
+        
+        .arrow-icon svg {
+            stroke: white;  /* Set arrow color */
+        }
+        
+      .profile-pic {
+            width: 50px; /* Set the width of the profile image */
+            height: 50px; /* Set the height of the profile image */
+            border-radius: 50%; /* Make the image round */
+            object-fit: cover; /* Ensure the image scales properly and remains proportional */
+            margin-left:1px; /* Adds space between arrow and image */
+            display: inline-block; /* Ensures correct alignment */
+        }
+        
+        .chat-header-left .scrolling-text-container {
+            width: 155px; /* Adjust this width to control the visible area */
+            font-size: 2px;
+            overflow: hidden; /* Hide the overflowing text */
+            white-space: nowrap; /* Prevent the text from wrapping */
+            position: relative;
+            text-overflow: ellipsis; /* Adds an ellipsis if the text is too long */
+        }
+        
+        .chat-header-left .scrolling-text {
+            display: inline-block;
+            font-size: 12px;
+            position: relative;
+            max-width: 70%; /* Limit text to the container's width */
+            overflow: hidden;
+            animation: scroll-once 3s linear forwards; /* Adjust timing as needed */
+            text-overflow: ellipsis; /* Prevents overflowing text from breaking the layout */
+        }
+        
+        /* Define the keyframe animation */
+        @keyframes scroll-once {
+            0% {
+                transform: translateX(-100%); /* Start offscreen to the left */
+            }
+            100% {
+                transform: translateX(0); /* Settle in the final position */
+            }
+        }
+        
+
+        
+        
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-header-left">
+
+                <!-- SVG Arrow Icon (Link to Chats) -->
+                <a href="{% url 'message_list' %}" class="arrow-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </a>
+
+                <img 
+                src="{% if receiver.profile.profile_pic %}{{ receiver.profile.profile_pic.url }}{% else %}{% static 'assets/img/profile.png' %}{% endif %}" 
+                alt="{{ receiver.username }}'s Profile Picture" 
+                class="profile-pic">
+                <div class="user-info">
+                    <h2 class="username">{{ receiver.username }}</h2>
+                    <!-- Scrolling Text Container -->
+                        <div class="scrolling-text-container">
+                            <small class="scrolling-text">last seen {{ user.last_login |date:"g:i A" }}</small>
+                        </div>
+                </div>
+            </div>
+
+           
+
+            
+            <div class="chat-header-right">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 7l-7 5 7 5V7z"></path>
+                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <div class="dropdown">
+                    <svg onclick="toggleDropdown()" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="19" cy="12" r="1"></circle>
+                        <circle cx="5" cy="12" r="1"></circle>
+                    </svg>
+                    <!-- Dropdown menu -->
+                    <div id="dropdown-menu" class="dropdown-menu">
+                        {% if request.user.is_staff %}
+                        <a href="#">View Profile</a>
+                        <a href="{% url 'message_list'%}">Chats</a>
+                        <a href="{% url 'admin_dashboard'%}">Home</a>
+                        <a href="#">Block</a>
+                
+                       {% else %}
+                       <a href="#">View Profile</a>
+                        <a href="{% url 'message_list'%}">Chats</a>
+                       <a href="{% url 'student_dashboard'%}">Home</a>
+                       <a href="#">Block</a>
+                      
+                      {% endif %}
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="chat-body">
+            <!-- Chat messages remain the same -->
+            {% for message in messages %}
+                <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                    <p>{{ message.content }}</p>
+                    {% if message.photo %}
+                        <p>
+                            <img src="{{ message.photo.url }}" alt="Photo" style="max-width: 100%; border-radius: 10px; margin-top: 5px;">
+                        </p>
+                    {% endif %}
+                     {% if message.pdf %}
+                            <div class="pdf-container" style="width: 200px; height: 280px; margin: 10px 0; border-radius: 10px; overflow: hidden; border: 1px solid #ddd;">
+                                <canvas id="pdf-canvas-{{ message.id }}" style="width: 100%; height: 100%;"></canvas>
+                            </div>
+                            <p>
+                                <i class="fas fa-file-pdf" title="PDF"></i>
+                                <a href="{{ message.pdf.url }}" target="_blank">Download PDF</a>
+                            </p>
+                            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+                            <script>
+                                pdfjsLib.getDocument("{{ message.pdf.url }}").promise.then(function(pdf) {
+                                    pdf.getPage(1).then(function(page) {
+                                        var canvas = document.getElementById('pdf-canvas-{{ message.id }}');
+                                        var context = canvas.getContext('2d');
+                                        var viewport = page.getViewport({scale: 0.5});
+                                        canvas.height = viewport.height;
+                                        canvas.width = viewport.width;
+                                        page.render({
+                                            canvasContext: context,
+                                            viewport: viewport
+                                        });
+                                    });
+                                });
+                            </script>
+                            {% endif %}
+                    <small>{{ message.timestamp|date:"g:i A" }}</small>
+                </div>
+            {% endfor %}
+            
+        </div>
+        <form method="POST"  enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="chat-footer">
+                <label class="icon-button">
+                    <input type="file" name="photo" accept="image/*" style="display:none;" onchange="this.form.submit()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                </label>
+
+                <label class="icon-button">
+                    <input type="file" name="pdf" accept=".pdf" style="display:none;" onchange="this.form.submit()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </label>
+
+                <input type="text" required  name="content"  placeholder="Type a message">
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </form>  
+    </div>
+
+    <!-- Ensure the script is placed after the content -->
+<script>
+    function toggleDropdown() {
+        document.getElementById("dropdown-menu").classList.toggle("show");
+    }
+    
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+        if (!event.target.closest('.dropdown')) {
+            var dropdowns = document.getElementsByClassName("dropdown-menu");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+    </script>
+</body>
+</html>

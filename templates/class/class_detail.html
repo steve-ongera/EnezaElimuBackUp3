@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Class Detail</title>
+</head>
+<body>
+    <h1>{{ class_instance.name }} - {{ class_instance.stream }}</h1>
+    <a href="{% url 'class_update' class_instance.pk %}">Edit</a>
+    <a href="{% url 'class_delete' class_instance.pk %}">Delete</a>
+    <a href="{% url 'class_list' %}">Back to list</a>
+</body>
+</html>

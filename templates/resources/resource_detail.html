@@ -1,0 +1,98 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+  <div class="pagetitle">
+    <h1>{{ resource.title }}</h1>
+  </div>
+
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ resource.title }}</h5>
+            <p>{{ resource.description }}</p>
+
+            <!-- PDF Preview -->
+            {% if resource.file %}
+              <div id="pdf-preview" class="pdf-container">
+                <canvas id="pdf-canvas"></canvas>
+              </div>
+              <script>
+                // Path to the PDF file
+                var url = "{{ resource.get_file_url }}";
+
+                // Asynchronous download of PDF
+                pdfjsLib.getDocument(url).promise.then(function (pdfDoc_) {
+                  pdfDoc = pdfDoc_;
+                  // Fetch the first page
+                  pdfDoc.getPage(1).then(function (page) {
+                    var scale = 1.5;
+                    var viewport = page.getViewport({ scale: scale });
+
+                    // Prepare canvas using the dimensions of the page
+                    var canvas = document.getElementById('pdf-canvas');
+                    var context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    // Render the page into the canvas context
+                    page.render({
+                      canvasContext: context,
+                      viewport: viewport
+                    });
+                  });
+                });
+              </script>
+            {% endif %}
+
+            <!-- Download button -->
+            <a href="{{ resource.get_file_url }}" class="btn btn-success" download>Download PDF</a>
+
+            <p>Views: {{ resource.views }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    /* Ensure the PDF preview is responsive */
+    .pdf-container {
+      max-width: 100%;
+      overflow: hidden;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    #pdf-canvas {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Ensure the page layout is responsive */
+    @media (max-width: 768px) {
+      .card-body {
+        padding: 1rem;
+      }
+
+      .pdf-container {
+        padding-bottom: 10px;
+      }
+
+      #pdf-canvas {
+        width: 100% !important;
+      }
+
+      .btn {
+        width: 100%;
+        margin-top: 10px;
+      }
+    }
+  </style>
+
+{% endblock %}

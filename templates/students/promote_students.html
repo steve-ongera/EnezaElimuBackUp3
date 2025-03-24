@@ -1,0 +1,16 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Promote Students to Next Class</h2>
+    <p>Click the button below to promote all active students to the next class. Students in Form 4 will be graduated.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Promote Students</button>
+    </form>
+
+    <br>
+    <a href="{% url 'students_list' %}" class="btn btn-secondary">Back to Student List</a>
+</div>
+{% endblock %}

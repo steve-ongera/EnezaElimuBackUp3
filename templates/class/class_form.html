@@ -1,0 +1,42 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+  <h1>{% if form.instance.pk %}Update Class{% else %}Create Class{% endif %}</h1>
+
+  <div class="card">
+      <div class="card-body">
+          <form method="POST">
+              {% csrf_token %}
+              <div class="row g-3">
+                  <!-- Class Name Field -->
+                  <div class="col-md-6">
+                      <label for="{{ form.name.id_for_label }}" class="form-label">Class Name</label>
+                      {{ form.name }}
+                      <div class="text-danger">
+                          {{ form.name.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Stream Field -->
+                  <div class="col-md-6">
+                      <label for="{{ form.stream.id_for_label }}" class="form-label">Stream</label>
+                      {{ form.stream }}
+                      <div class="text-danger">
+                          {{ form.stream.errors }}
+                      </div>
+                  </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="text-center mt-3">
+                  <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+          </form>
+      </div>
+  </div>
+
+  <!-- Back to List Link -->
+  <div class="text-center mt-3">
+      <a href="{% url 'class_list' %}" class="btn btn-secondary">Back to list</a>
+  </div>
+{% endblock %}

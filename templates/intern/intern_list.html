@@ -1,0 +1,66 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+<div class="pagetitle">
+    <h1>Interns</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item">Interns</li>
+            <li class="breadcrumb-item active"><a href="{% url 'create_intern' %}">Add Intern</a></li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Intern List</h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped datatable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Supervisor</th>
+                                    <th>Internship Period</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for intern in interns %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'intern_detail' intern.pk %}">
+                                            {{ intern.first_name }} {{ intern.last_name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ intern.department }}</td>
+                                    <td>{{ intern.phone }}</td>
+                                    <td>{{ intern.email }}</td>
+                                    <td>{{ intern.supervisor }}</td>
+                                    <td>{{ intern.start_date }} - {{ intern.end_date }}</td>
+                                    <td><a href="{% url 'update_intern' intern.pk %}">Edit</a></td>
+                                    <td><a href="{% url 'delete_intern' intern.pk %}">Delete</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- End Table with stripped rows -->
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

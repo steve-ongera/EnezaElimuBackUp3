@@ -1,0 +1,143 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+<div class="pagetitle">
+    <h1>Student Distribution</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item active">Student Distribution</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <!-- Filter and Title -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Student Distribution by Previous Class & Stream</h5>
+
+                    <!-- Year Filter -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="me-2 fw-semibold">Select Year:</label>
+                        <select id="yearFilter" class="form-select w-auto"
+                                onchange="window.location.href='?year=' + this.value">
+                            {% for year in available_years %}
+                                <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                                    {{ year }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Chart Container -->
+                    <div class="mb-4">
+                        <canvas id="classDistributionChart" style="height: 400px;"></canvas>
+                    </div>
+
+                    <!-- Table View -->
+                    <h6 class="fw-bold mb-3">Detailed Distribution Data for Year {{ selected_year }}</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Previous Class</th>
+                                    <th>Stream</th>
+                                    <th>No. of Students</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in class_distribution %}
+                                <tr>
+                                    <td>{{ data.class_of_study__name }}</td>
+                                    <td>{{ data.class_of_study__stream }}</td>
+                                    <td>{{ data.student_count }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Chart Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('classDistributionChart').getContext('2d');
+
+    const labels = {{ labels|safe }};
+    const counts = {{ counts|safe }};
+    const selectedYear = {{ selected_year }};
+
+    const colors = Array(labels.length).fill().map((_, i) => 
+        `hsl(${(i * 360 / labels.length) + 200}, 70%, 60%)`
+    );
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `Number of Students in Previous Class (${selectedYear})`,
+                data: counts,
+                backgroundColor: colors,
+                borderColor: colors.map(color => color.replace('0.2', '1')),
+                borderWidth: 1,
+                borderRadius: 5,
+                barThickness: 30,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: `Student Distribution by Previous Class and Stream - ${selectedYear}`,
+                    font: { size: 16 },
+                    padding: 20
+                },
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function(context) {
+                            return `Students: ${context.parsed.y}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Students',
+                        font: { size: 14 }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Previous Class and Stream',
+                        font: { size: 14 }
+                    },
+                    ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 }
+                }
+            }
+        }
+    });
+});
+</script>
+
+{% endblock %}

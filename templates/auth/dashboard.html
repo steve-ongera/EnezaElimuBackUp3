@@ -1,0 +1,564 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+  .image-container {
+    position: relative;
+}
+
+.icon-edit, .icon-delete {
+    font-size: 1.2rem;  /* Smaller size for both icons */
+    cursor: pointer;
+}
+
+.icon-edit {
+    position: absolute;
+    top: 5px;    /* Adjusted top value to give space from the top */
+    right: 5px;  /* Adjusted right value to place it near the edge */
+    padding: 5px;
+}
+
+.icon-delete {
+    position: absolute;
+    top: 30px;   /* Move the trash icon below the pencil icon */
+    right: 5px;  /* Same right value for consistent alignment */
+    padding: 5px;
+}
+
+.activity-wrapper {
+  overflow-x: auto; /* Allow horizontal scrolling */
+  -webkit-overflow-scrolling: touch; /* For smoother scrolling on mobile */
+  width: 100%; /* Ensure full width */
+}
+
+.activity {
+  display: flex; /* Align activity items horizontally */
+  flex-direction: column; /* Arrange the items in a column */
+  min-width: 100%; /* Ensure the content fits within the width */
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  margin: 5px 0; /* Space between activity items */
+  min-width: 300px; /* Set minimum width for items */
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflowing text */
+}
+
+.activity-item .activity-content {
+  text-overflow: ellipsis; /* Ensure overflowing text is truncated */
+  max-width: calc(100% - 50px); /* Adjust based on content width */
+}
+
+.activity-item .activite-label {
+  width: 100px; /* Set a fixed width for the label */
+}
+
+.activity-item .activity-badge {
+  margin-left: 10px; /* Add space between the badge and content */
+}
+
+
+
+</style>
+<div class="pagetitle">
+    <h1>Dashboard</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard'%}">Home</a></li>
+        <li class="breadcrumb-item active">Dashboard</li>
+        <li class="breadcrumb-item"> {{ request.user.username }}</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section dashboard">
+    <div class="row">
+
+                {% if messages %}
+                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                          {% for message in messages %}
+                              <h5>{{ message }}</h5>
+                          {% endfor %}
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+                  {% endif %}
+
+      <!-- Left side columns -->
+      <div class="col-lg-8">
+        <div class="row">
+
+          <div class="col-xxl-4 col-md-6">
+            <div class="card info-card sales-card">
+              <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+                  <li><a class="dropdown-item" href="#">This Term</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>
+          
+              <div class="card-body">
+                <h5 class="card-title">Performance <span>| {{ latest_term }}</span></h5>
+          
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-graph-up"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ latest_term_average }}%</h6>
+                    <span class="text-success fw-bold">{{ latest_term_grade }}</span>
+                    <span class="text-muted small pt-1 ps-1">Grade</span>
+                    {% comment %}
+                    <div class="text-muted small pt-2">{{ latest_term_position }}</div>
+                    {% endcomment %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+              
+
+              <div class="col-xxl-4 col-md-6">
+                <div class="card info-card revenue-card">
+              
+                  <div class="card-body">
+                    <h5 class="card-title">Subjects Enrolled <span>| Current</span></h5>
+              
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-book"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6>{{ subjects_count }}</h6>
+                        <span class="text-muted small pt-2 ps-1">Total Subjects</span>
+                      </div>
+                    </div>
+                  </div>
+              
+                </div>
+              </div>
+              
+
+              <div class="col-xxl-4 col-md-6">
+                <div class="card info-card revenue-card">
+              
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+                      <li><a class="dropdown-item" href="#">Today</a></li>
+                      <li><a class="dropdown-item" href="#">This Month</a></li>
+                      <li><a class="dropdown-item" href="#">This Year</a></li>
+                    </ul>
+                  </div>
+              
+                  <div class="card-body">
+                    <h5 class="card-title">Fee Balance <span>| {{ selected_term.name }} {{ selected_term.year }}</span></h5>
+              
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-cash-coin"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6>Ksh {{ fee_balance }}</h6>
+                       
+                      </div>
+                    </div>
+                  </div>
+              
+                </div>
+              </div><!-- End Fee Balance Card -->
+              
+              
+
+
+          
+
+          <!-- Enrolled Subjects -->
+          <div class="col-12">
+            <div class="card">
+
+                <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                        <li class="dropdown-header text-start">
+                            <h6>Filter</h6>
+                        </li>
+                        <li><a class="dropdown-item" href="#">Today</a></li>
+                        <li><a class="dropdown-item" href="#">This Month</a></li>
+                        <li><a class="dropdown-item" href="#">This Year</a></li>
+                    </ul>
+                </div>
+
+                <div class="card-body">
+                    <h5 class="card-title">Enrolled Subjects <span>| {{ selected_term.name }} {{ selected_term.year }}</span></h5>
+
+                    <!-- Term Filter -->
+                    <form method="GET" class="mb-3">
+                        <label for="term" class="form-label">Filter by Term:</label>
+                        <select name="term" id="term" class="form-select" onchange="this.form.submit()">
+                            {% for term in terms %}
+                                <option value="{{ term.id }}" {% if term == selected_term %}selected{% endif %}>
+                                    {{ term.name }} {{ term.year }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+
+                    <!-- Enrolled Subjects Table -->
+                    {% if enrolled_subjects %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Date Enrolled</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for enrollment in enrolled_subjects %}
+                                <tr>
+                                    <td>{{ enrollment.subject.name }}</td>
+                                    <td>{{ enrollment.date_enrolled|date:"d M Y" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                        <p>No subjects enrolled for this term.</p>
+                    {% endif %}
+
+                </div>
+            </div>
+          </div><!-- End Enrolled Subjects -->
+
+            
+
+          
+             
+
+          <!-- Recent results -->
+          <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+
+              <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+
+                  <li><a class="dropdown-item" href="#">Today</a></li>
+                  <li><a class="dropdown-item" href="#">This Month</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>
+              
+            
+              <div class="card-body">
+                
+                <h5 class="card-title">Recent Results - {{ latest_term.name }} {{ latest_term.year }}</h5>
+
+              {% if recent_results %}
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Subject</th>
+                    <th>CAT 1</th>
+                    <th>CAT 2</th>
+                    <th>CAT 3</th>
+                    <th>End Term Avg</th>
+                    <th>Grade</th>
+                    <th>Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for result in recent_results %}
+                    <tr>
+                        <td>{{ result.subject.name }}</td>
+                        <td>{{ result.cat1|floatformat:2 }}</td>
+                        <td>{{ result.cat2|floatformat:2 }}</td>
+                        <td>{{ result.cat3|floatformat:2 }}</td>
+                        <td>{{ result.end_term|floatformat:2 }}</td>
+                        <td>{{ result.letter_grade }}</td>
+                        <td>{{ result.position }}</td>
+                    </tr>
+                    {% endfor %}
+                            
+                  </tbody>
+                </table>
+                {% else %}
+                <p>No recent results available.</p>
+            {% endif %}
+              </div>
+
+            </div>
+          </div>
+          
+        
+          <!-- End county ranking-->
+
+          <!-- Top 10 Students -->
+          <div class="col-12">
+            <div class="card top-selling overflow-auto">
+
+              <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+
+                  <li><a class="dropdown-item" href="#">Today</a></li>
+                  <li><a class="dropdown-item" href="#">This Month</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>
+
+              <div class="card-body pb-0">
+                <h5 class="card-title">Fee Balance <span>| Today</span></h5>
+
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Term</th>
+                      <th>Required Fee</th>
+                      <th>Amount Paid</th>
+                      <th>Balance</th>
+
+                
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for fee in fee_data %}
+                    <tr>
+                      <td>{{ fee.term.name }} {{ fee.term.year }}</td>
+                      <td>Ksh {{ fee.required_fee|floatformat:2 }}</td>
+                      <td>Ksh {{ fee.total_paid|floatformat:2 }}</td>
+                      <td>
+                        {% if fee.balance > 0 %}
+                          <span class="text-danger">Ksh {{ fee.balance|floatformat:2 }}</span>
+                        {% else %}
+                          <span class="text-success">Cleared</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+
+              </div>
+
+            </div>
+          </div><!-- End Top Selling -->
+
+        </div>
+      </div><!-- End Left side columns -->
+
+      <!-- Right side columns -->
+      <div class="col-lg-4">
+
+        <!-- Recent Activity -->
+        <div class="card">
+          <div class="filter">
+            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+              <li class="dropdown-header text-start">
+                <h6>Filter</h6>
+              </li>
+
+              <li><a class="dropdown-item" href="#">Today</a></li>
+              <li><a class="dropdown-item" href="#">This Month</a></li>
+              <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
+          </div>
+
+          <div class="card-body">
+            <h5 class="card-title">Recent Activity <span>| Today</span></h5>
+
+            <div class="activity-wrapper">
+              <div class="activity">
+                {% for activity in recent_activities %}
+                  <div class="activity-item d-flex">
+                    <div class="activite-label">{{ activity.timestamp|date:"g:ia" }}</div>
+                    <i class='bi bi-circle-fill activity-badge text-success align-self-start'></i>
+                    <div class="activity-content">
+                      {{ activity.user.username }} <a href="#" class="fw-bold text-dark">{{ activity.action }}</a> at {{ activity.timestamp|date:"M d, Y H:i" }}
+                    </div>
+                  </div><!-- End activity item-->
+                {% endfor %}
+              </div>
+            </div>
+            
+
+            
+          </div>
+        </div><!-- End Recent Activity -->
+
+        
+
+        <div class="card">
+          <div class="filter">
+            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+              <li class="dropdown-header text-start">
+                <h6>Filter</h6>
+              </li>
+              <li><a class="dropdown-item" href="#">Today</a></li>
+              <li><a class="dropdown-item" href="#">This Month</a></li>
+              <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
+          </div>
+        
+          <div class="card-body pb-0">
+            <h5 class="card-title">Subject Performance <span>| {{ latest_term.year }} {{ latest_term.name }}</span></h5>
+            
+            <div id="subjectPerformanceDonutChart" style="min-height: 400px;" class="echart"></div>
+            
+            <script>
+              document.addEventListener("DOMContentLoaded", () => {
+                const performanceData = JSON.parse('{{ performance_data_json|safe }}');
+                
+                echarts.init(document.querySelector("#subjectPerformanceDonutChart")).setOption({
+                  tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c}%'
+                  },
+                  legend: {
+                    orient: 'vertical',
+                    right: 10,
+                    top: 'center',
+                    type: 'scroll'
+                  },
+                  series: [{
+                    name: 'Subject Marks',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                      borderRadius: 10,
+                      borderColor: '#fff',
+                      borderWidth: 2
+                    },
+                    label: {
+                      show: true,
+                      formatter: '{b}: {c}%'
+                    },
+                    emphasis: {
+                      label: {
+                        show: true,
+                        fontSize: '18',
+                        fontWeight: 'bold'
+                      }
+                    },
+                    data: performanceData,
+                    // Dynamic colors based on subject count
+                    color: ['#4154f1', '#2eca6a', '#ff771d', '#ffbb55', '#dc3545', '#6f42c1', '#20c997', '#0dcaf0']
+                  }]
+                });
+              });
+            </script>
+          </div>
+        </div>
+
+
+        
+
+        <!-- News & Updates  -->
+        <div class="card">
+          <div class="filter">
+            <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+              <li class="dropdown-header text-start">
+                <h6>Filter</h6>
+              </li>
+
+              <li><a class="dropdown-item" href="#">Today</a></li>
+              <li><a class="dropdown-item" href="#">This Month</a></li>
+              <li><a class="dropdown-item" href="#">This Year</a></li>
+            </ul>
+          </div>
+
+          <div class="card-body pb-0">
+            <h5 class="card-title">News &amp; Updates <span>| Today</span></h5>
+            
+            <div class="news">
+              
+              
+              {% for news in news_updates %}
+              <div class="post-item clearfix">
+                {% if news.image %}
+                  <div class="image-container position-relative">
+                    <img src="{{ news.image.url }}" alt="" class="img-fluid">
+                    
+                    <!-- Edit and Delete Icons -->
+                    {% if news.created_by == request.user %}
+                      
+                      <a href="{% url 'news_delete' news.pk %}" class="icon-delete " style="font-size: 1.1rem;">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                {% if news.created_by == request.user %}
+                <h4><a href="{% url 'news_edit' news.pk %}">{{ news.title }}</a></h4>
+                 {% else %}
+                 <h4>{{ news.title }}</h4>
+                {% endif %}
+                <p>{{ news.description|truncatechars:100 }}</p>
+              </div>
+            {% endfor %}
+            
+
+
+            </div><!-- End sidebar recent posts-->
+
+          </div>
+        </div><!-- End News & Updates -->
+
+      </div><!-- End Right side columns -->
+
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+
+{% comment %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-xl font-bold text-center mb-4">Welcome, {{ student.name }}</h2>
+        
+        <p><strong>Admission Number:</strong> {{ student.admission_number }}</p>
+        <p><strong>Current Class:</strong> {{ student.current_class.name }}</p>
+
+        <div class="mt-4">
+            <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full block text-center">
+                Logout
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+{% endcomment %}

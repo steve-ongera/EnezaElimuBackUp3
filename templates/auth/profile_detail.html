@@ -1,0 +1,182 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block content %}
+
+<section class="section profile">
+  <div class="row">
+    <div class="col-xl-4">
+      <div class="card">
+        <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+          {% if doctor.profile_picture %}
+            <img src="{{ profile.profile_image.url }}" alt="Profile Picture" class="img-fluid rounded">
+          {% else %}
+            <img src="{% static 'assets/img/profile.png'%}" alt="Profile Picture" class="img-fluid rounded">   
+          {% endif %}
+
+          <!-- Edit Profile Icon (Visible only for logged-in user) -->
+          {% if user == profile.user %}
+            <a href="{% url 'edit_profile' %}" class="edit-profile-btn" title="Edit Profile">
+              <i class="bi bi-pencil-square"></i> <!-- Pencil Icon -->
+            </a>
+          {% endif %}
+
+          <h2>{{ profile.full_names }}</h2>
+          <h3>{{ profile.role }}</h3>
+          <div class="social-links mt-2">
+            <a href="{{ profile.twitter }}" class="twitter"><i class="bi bi-twitter"></i></a>
+            <a href="{{ profile.facebook }}" class="facebook"><i class="bi bi-facebook"></i></a>
+            <a href="{{ profile.instagram }}" class="instagram"><i class="bi bi-instagram"></i></a>
+            <a href="{{ profile.linkedin }}" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-8">
+      <div class="card">
+        <div class="card-body pt-3">
+          <!-- Bordered Tabs -->
+          <ul class="nav nav-tabs nav-tabs-bordered">
+            <li class="nav-item">
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Settings</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+            </li>
+          </ul>
+          <div class="tab-content pt-2">
+
+            <div class="tab-pane fade show active profile-overview" id="profile-overview">
+              <h5 class="card-title">About</h5>
+              <p class="small fst-italic">{{ profile.about }}</p>
+
+              <h5 class="card-title">Profile Details</h5>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label">Full Name</div>
+                <div class="col-lg-9 col-md-8">{{ profile.full_names }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label">Region</div>
+                <div class="col-lg-9 col-md-8">{{ profile.Region }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label">County</div>
+                <div class="col-lg-9 col-md-8">{{ profile.county }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label">Address</div>
+                <div class="col-lg-9 col-md-8">{{ profile.address }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label">Phone</div>
+                <div class="col-lg-9 col-md-8">{{ profile.phone }}</div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label">Email</div>
+                <div class="col-lg-9 col-md-8">{{ profile.email }}</div>
+              </div>
+
+            </div>
+
+            <!-- Edit Profile Section -->
+            <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+              <!-- Profile Edit Form -->
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <label for="profile_image" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+                  <div class="col-md-8 col-lg-9">
+                    <img src="{{ profile.profile_image.url }}" alt="Profile" class="img-fluid">
+                    <div class="pt-2">
+                      <!-- Upload Button -->
+                      <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image" onclick="document.getElementById('profileImageInput').click();">
+                        <i class="bi bi-upload"></i> Upload
+                      </a>
+                      <!-- Remove Button -->
+                      <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image" onclick="removeProfileImage();">
+                        <i class="bi bi-trash"></i> Remove
+                      </a>
+                      <!-- Hidden File Input -->
+                      <input type="file" id="profileImageInput" name="profile_image" style="display: none;" accept="image/*" onchange="previewImage(event)">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="full_names" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input name="full_names" type="text" class="form-control" id="full_names" value="{{ profile.full_names }}">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="about" class="col-md-4 col-lg-3 col-form-label">About</label>
+                  <div class="col-md-8 col-lg-9">
+                    <textarea name="about" class="form-control" id="about" style="height: 100px">{{ profile.about }}</textarea>
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="role" class="col-md-4 col-lg-3 col-form-label">Role</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input name="job" type="text" class="form-control" id="role" value="{{ profile.role }}">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="county" class="col-md-4 col-lg-3 col-form-label">County</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input name="county" type="text" class="form-control" id="county" value="{{ profile.county }}">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="address" class="col-md-4 col-lg-3 col-form-label">Address</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input name="address" type="text" class="form-control" id="address" value="{{ profile.address }}">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input name="phone" type="text" class="form-control" id="phone" value="{{ profile.phone }}">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input name="email" type="email" class="form-control" id="email" value="{{ profile.email }}">
+                  </div>
+                </div>
+
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+              </form><!-- End Profile Edit Form -->
+            </div>
+
+          </div><!-- End Bordered Tabs -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+{% endblock %}

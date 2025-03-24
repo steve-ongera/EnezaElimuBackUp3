@@ -1,0 +1,48 @@
+
+/* Style for the alert container */
+.alert {
+    position: relative;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 5px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  
+  /* Style for the alert heading (message content) */
+  .alert h5 {
+    margin: 0;
+    font-size: 16px;
+  }
+  
+  /* Close button style */
+  .alert .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    background: none;
+    border: none;
+    color: #721c24;
+    cursor: pointer;
+  }
+  
+  /* Close button on hover */
+  .alert .close:hover {
+    color: #5c1e1e;
+  }
+
+  /* Ensure the icons appear on top of the image and have a smooth hover effect */
+.image-container {
+  position: relative;
+}
+
+.icon-edit, .icon-delete {
+  transition: transform 0.3s ease;
+}
+
+.icon-edit:hover, .icon-delete:hover {
+  transform: scale(1.2); /* Slightly increase size on hover */
+  color: #f8f9fa; /* Optionally change the color on hover */
+}

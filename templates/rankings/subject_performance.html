@@ -1,0 +1,153 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+<div class="container mx-auto px-4 py-6">
+        <div class="pagetitle mb-6">
+            <h1 class="text-2xl font-bold">Subject Performance Analysis</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+                    <li class="breadcrumb-item active">Subject Performance Analysis</li>
+                </ol>
+            </nav>
+        </div>
+    
+    <!-- Filter Form -->
+    <form method="get" class="mb-4 p-4 bg-light rounded shadow-sm">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="year" class="form-label">Year:</label>
+                <select name="year" id="year" class="form-select">
+                    {% for year in available_years %}
+                        <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                            {{ year }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <label for="term" class="form-label">Term:</label>
+                <select name="term" id="term" class="form-select">
+                    <option value="">All Terms</option>
+                    {% for term in available_terms %}
+                        <option value="{{ term }}" {% if term == selected_term %}selected{% endif %}>
+                            {{ term }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-4 mb-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    Filter
+                </button>
+            </div>
+        </div>
+    </form>
+    
+    <!-- Performance Display -->
+    {% for term_data in analytics %}
+    <div class="mb-12">
+        <h2 class="text-xl font-semibold mb-4">{{ term_data.term }}</h2>
+        
+        <div class="overflow-x-auto shadow">
+            <table class="min-w-full bg-white border border-gray-300 table-fixed text-sm">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="sticky left-0 z-10 bg-gray-100 px-2 py-1 border w-16">Rank</th>
+                        <th class="sticky left-[60px] z-10 bg-gray-100 px-2 py-1 border w-32">Subject</th>
+                        <th class="sticky left-[260px] z-10 bg-gray-100 px-2 py-1 border w-20">Students</th>
+                        <th class="sticky left-[360px] z-10 bg-gray-100 px-2 py-1 border w-24">Mean Score</th>
+                        <th class="sticky left-[460px] z-10 bg-gray-100 px-2 py-1 border w-20">Points</th>
+                        <th class="sticky left-[560px] z-10 bg-gray-100 px-2 py-1 border w-20">Grade</th>
+                        <th class="px-2 py-1 border w-24">Quality %</th>
+                        <th class="px-2 py-1 border w-24">Pass Rate</th>
+                        <th class="px-2 py-1 border w-32">Grade Distribution</th>
+                        
+                        {% for stream in streams %}
+                            <th class="px-2 py-1 border w-32 whitespace-nowrap">
+                                {{ stream.name }} {{ stream.stream }}
+                                <div class="text-xs font-normal">Score (Grade)</div>
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject_data in term_data.subjects %}
+                    <tr class="{% cycle 'bg-white' 'bg-gray-50' %}">
+                        <td class="sticky left-0 z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-2 py-1 border text-center whitespace-nowrap">
+                            {{ subject_data.rank }}
+                        </td>
+                        <td class="sticky left-[60px] z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-2 py-1 border font-medium whitespace-nowrap">
+                            {{ subject_data.subject.name }}
+                        </td>
+                        <td class="sticky left-[260px] z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-2 py-1 border text-center whitespace-nowrap">
+                            {{ subject_data.total_students }}
+                        </td>
+                        <td class="sticky left-[360px] z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-2 py-1 border text-center whitespace-nowrap">
+                            {{ subject_data.average_score }}%
+                        </td>
+                        <td class="sticky left-[460px] z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-2 py-1 border text-center whitespace-nowrap">
+                            {{ subject_data.grade_points }}
+                        </td>
+                        <td class="sticky left-[560px] z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-2 py-1 border text-center whitespace-nowrap">
+                            {{ subject_data.letter_grade }}
+                        </td>
+                        <td class="px-2 py-1 border text-center whitespace-nowrap">
+                            {{ subject_data.quality_percentage }}%
+                        </td>
+                        <td class="px-2 py-1 border text-center whitespace-nowrap">
+                            {{ subject_data.pass_rate }}%
+                        </td>
+                        <td class="px-2 py-1 border text-sm whitespace-nowrap">
+                            {{ subject_data.grade_distribution|join:", " }}
+                        </td>
+                        
+                        {% for stream in streams %}
+                            <td class="px-2 py-1 border text-center whitespace-nowrap">
+                                {% for stream_data in subject_data.streams %}
+                                    {% if stream_data.stream.id == stream.id %}
+                                        {{ stream_data.average_score }}% ({{ stream_data.letter_grade }})
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-8">
+        <p class="text-gray-500">No performance data available for the selected filters.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .table-fixed {
+        table-layout: fixed;
+    }
+    
+    .overflow-x-auto {
+        scrollbar-width: thin;
+        scrollbar-color: #CBD5E0 #EDF2F7;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-track {
+        background: #EDF2F7;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-thumb {
+        background-color: #CBD5E0;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}

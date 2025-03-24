@@ -1,0 +1,249 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<div class="pagetitle">
+    <h2>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Student Details</h2>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'students_list' %}">Students</a></li>
+            <li class="breadcrumb-item active">Students Details</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+  
+
+  <div class="card">
+      <div class="card-body">
+          <form method="POST">
+              {% csrf_token %}
+              
+              <div class="row g-3">
+                  <!-- Name Field -->
+                  <div class="col-md-3">
+                      <label for="{{ form.name.id_for_label }}" class="form-label">Full Name</label>
+                      {{ form.name }}
+                      <div class="text-danger">
+                          {{ form.name.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Admission Number Field -->
+                  <div class="col-md-3">
+                      <label for="{{ form.admission_number.id_for_label }}" class="form-label">Admission Number</label>
+                      {{ form.admission_number }}
+                      <div class="text-danger">
+                          {{ form.admission_number.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Current Class Field -->
+                  <div class="col-md-6">
+                      <label for="{{ form.current_class.id_for_label }}" class="form-label">Current Class</label>
+                      {{ form.current_class }}
+                      <div class="text-danger">
+                          {{ form.current_class.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Gender Field -->
+                  <div class="col-md-2">
+                      <label for="{{ form.gender.id_for_label }}" class="form-label">Gender</label>
+                      {{ form.gender }}
+                      <div class="text-danger">
+                          {{ form.gender.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Date of Birth Field -->
+                  <div class="col-md-2">
+                      <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Date of Birth</label>
+                      {{ form.date_of_birth }}
+                      <div class="text-danger">
+                          {{ form.date_of_birth.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Admission Date Field -->
+                  <div class="col-md-2">
+                      <label for="{{ form.admission_date.id_for_label }}" class="form-label">Admission Date</label>
+                      {{ form.admission_date }}
+                      <div class="text-danger">
+                          {{ form.admission_date.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Address Field -->
+                  <div class="col-md-2">
+                      <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+                      {{ form.address }}
+                      <div class="text-danger">
+                          {{ form.address.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Father Name Field -->
+                  <div class="col-md-2">
+                      <label for="{{ form.father_name.id_for_label }}" class="form-label">Father Name</label>
+                      {{ form.father_name }}
+                      <div class="text-danger">
+                          {{ form.father_name.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Father Phone Field -->
+                  <div class="col-md-2">
+                      <label for="{{ form.father_phone.id_for_label }}" class="form-label">Father Phone</label>
+                      {{ form.father_phone }}
+                      <div class="text-danger">
+                          {{ form.father_phone.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Father Occupation Field -->
+                  <div class="col-md-4">
+                      <label for="{{ form.father_occupation.id_for_label }}" class="form-label">Father Occupation</label>
+                      {{ form.father_occupation }}
+                      <div class="text-danger">
+                          {{ form.father_occupation.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Mother Name Field -->
+                  <div class="col-md-4">
+                      <label for="{{ form.mother_name.id_for_label }}" class="form-label">Mother Name</label>
+                      {{ form.mother_name }}
+                      <div class="text-danger">
+                          {{ form.mother_name.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Mother Phone Field -->
+                  <div class="col-md-4">
+                      <label for="{{ form.mother_phone.id_for_label }}" class="form-label">Mother Phone</label>
+                      {{ form.mother_phone }}
+                      <div class="text-danger">
+                          {{ form.mother_phone.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Mother Occupation Field -->
+                  <div class="col-md-3">
+                      <label for="{{ form.mother_occupation.id_for_label }}" class="form-label">Mother Occupation</label>
+                      {{ form.mother_occupation }}
+                      <div class="text-danger">
+                          {{ form.mother_occupation.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Guardian Name Field -->
+                  <div class="col-md-3">
+                      <label for="{{ form.guardian_name.id_for_label }}" class="form-label">Guardian Name</label>
+                      {{ form.guardian_name }}
+                      <div class="text-danger">
+                          {{ form.guardian_name.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Guardian Phone Field -->
+                  <div class="col-md-3">
+                      <label for="{{ form.guardian_phone.id_for_label }}" class="form-label">Guardian Phone</label>
+                      {{ form.guardian_phone }}
+                      <div class="text-danger">
+                          {{ form.guardian_phone.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Guardian Relationship Field -->
+                  <div class="col-md-3">
+                      <label for="{{ form.guardian_relationship.id_for_label }}" class="form-label">Guardian Relationship</label>
+                      {{ form.guardian_relationship }}
+                      <div class="text-danger">
+                          {{ form.guardian_relationship.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Guardian Address Field -->
+                  <div class="col-md-4">
+                      <label for="{{ form.guardian_address.id_for_label }}" class="form-label">Guardian Address</label>
+                      {{ form.guardian_address }}
+                      <div class="text-danger">
+                          {{ form.guardian_address.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Emergency Contact Name Field -->
+                  <div class="col-md-4">
+                      <label for="{{ form.emergency_contact_name.id_for_label }}" class="form-label">Emergency Contact Name</label>
+                      {{ form.emergency_contact_name }}
+                      <div class="text-danger">
+                          {{ form.emergency_contact_name.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Emergency Contact Phone Field -->
+                  <div class="col-md-4">
+                      <label for="{{ form.emergency_contact_phone.id_for_label }}" class="form-label">Emergency Contact Phone</label>
+                      {{ form.emergency_contact_phone }}
+                      <div class="text-danger">
+                          {{ form.emergency_contact_phone.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Emergency Contact Relationship Field -->
+                  <div class="col-md-6">
+                      <label for="{{ form.emergency_contact_relationship.id_for_label }}" class="form-label">Emergency Contact Relationship</label>
+                      {{ form.emergency_contact_relationship }}
+                      <div class="text-danger">
+                          {{ form.emergency_contact_relationship.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Blood Group Field -->
+                  <div class="col-md-6">
+                      <label for="{{ form.blood_group.id_for_label }}" class="form-label">Blood Group</label>
+                      {{ form.blood_group }}
+                      <div class="text-danger">
+                          {{ form.blood_group.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Medical Conditions Field -->
+                  <div class="col-md-4">
+                      <label for="{{ form.medical_conditions.id_for_label }}" class="form-label">Medical Conditions</label>
+                      {{ form.medical_conditions }}
+                      <div class="text-danger">
+                          {{ form.medical_conditions.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Previous School Field -->
+                  <div class="col-md-4">
+                      <label for="{{ form.previous_school.id_for_label }}" class="form-label">Previous School</label>
+                      {{ form.previous_school }}
+                      <div class="text-danger">
+                          {{ form.previous_school.errors }}
+                      </div>
+                  </div>
+
+                  <!-- Remarks Field -->
+                  <div class="col-md-4">
+                      <label for="{{ form.remarks.id_for_label }}" class="form-label">Remarks</label>
+                      {{ form.remarks }}
+                      <div class="text-danger">
+                          {{ form.remarks.errors }}
+                      </div>
+                  </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="text-center mt-3">
+                  <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+          </form>
+      </div>
+  </div>
+
+  <a href="{% url 'students_list' %}" class="btn btn-secondary mt-3">Back to List</a>
+{% endblock %}

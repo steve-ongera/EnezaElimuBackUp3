@@ -1,0 +1,72 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+<div class="pagetitle">
+    <h1>Students</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item">Students</li>
+            <li class="breadcrumb-item active"><a href="{% url 'student_create' %}">Add Student</a></li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Student List</h5>
+                
+                    <a href="{% url 'promote_students' %}" class="btn btn-success mb-3">Promote Students</a>
+                
+                    <div class="table-responsive">
+                        <table class="table table-striped datatable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Admission Number</th>
+                                    <th>Class</th>
+                                    <th>Phone</th>
+                                    <th>Parent/Guardian</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in students %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'student_progress' student.id %}">
+                                            {{ student.first_name }} {{ student.last_name }}
+                                        </a>
+                                    </td>
+                                    <td><a href="{% url 'student_detail' student.id %}">{{ student.admission_number }}</a></td>
+                                    <td>
+                                        {% if student.current_class %}
+                                            {{ student.current_class }}
+                                        {% else %}
+                                            Graduated
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ student.phone }}</td>
+                                    <td>{{ student.parent_guardian }}</td>
+                                    <td><a href="{% url 'student_update' student.pk %}">Edit</a></td>
+                                    <td><a href="{% url 'student_delete' student.pk %}">Delete</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

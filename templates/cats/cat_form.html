@@ -1,0 +1,142 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<div class="pagetitle">
+    <h1>Enter Exam Scores (cats)</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'cat_list' %}">CATs records </a></li>
+            <li class="breadcrumb-item active">Enter CAT Scores</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Enter CAT Scores</h5>
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="row g-3">
+                            <!-- Student Search Field -->
+                            <div class="col-md-12">
+                                <label for="student-search" class="form-label">Search by Admission Number</label>
+                                <input type="text" id="student-search" class="form-control" placeholder="Enter Admission Number">
+                            </div>
+
+                            <!-- Hidden field to store selected student ID -->
+                            <input type="hidden" name="student" id="student-id">
+
+                            <!-- Display Student Name after selection -->
+                            <div class="col-md-6">
+                                <label for="student-name" class="form-label mt-2">Student Name</label>
+                                <input type="text" id="student-name" class="form-control" readonly>
+                                <div class="text-danger">
+                                    {{ form.student.errors }}
+                                </div>
+                            </div>
+
+                            <!-- Subject Field -->
+                            <div class="col-md-6">
+                                <label for="{{ form.subject.id_for_label }}" class="form-label">Subject</label>
+                                {{ form.subject }}
+                                <div class="text-danger">
+                                    {{ form.subject.errors }}
+                                </div>
+                            </div>
+
+                            <!-- Term Field -->
+                            <div class="col-md-6">
+                                <label for="{{ form.term.id_for_label }}" class="form-label">Term</label>
+                                {{ form.term }}
+                                <div class="text-danger">
+                                    {{ form.term.errors }}
+                                </div>
+                            </div>
+
+                            <!-- Class of Study Field -->
+                            <div class="col-md-6">
+                                <label for="class_of_study" class="form-label">Class of Study</label>
+                                <input type="text" id="class_of_study" class="form-control" readonly>
+                                <div class="text-danger">
+                                    {{ form.class_of_study.errors }}
+                                </div>
+                            </div>
+
+                            <!-- CAT 1 Field -->
+                            <div class="col-md-6">
+                                <label for="{{ form.cat1.id_for_label }}" class="form-label">CAT 1 Score</label>
+                                {{ form.cat1 }}
+                                <div class="text-danger">
+                                    {{ form.cat1.errors }}
+                                </div>
+                            </div>
+
+                            <!-- CAT 2 Field -->
+                            <div class="col-md-6">
+                                <label for="{{ form.cat2.id_for_label }}" class="form-label">CAT 2 Score</label>
+                                {{ form.cat2 }}
+                                <div class="text-danger">
+                                    {{ form.cat2.errors }}
+                                </div>
+                            </div>
+
+                            <!-- CAT 3 Field -->
+                            <div class="col-md-6">
+                                <label for="{{ form.cat3.id_for_label }}" class="form-label">CAT 3 Score</label>
+                                {{ form.cat3 }}
+                                <div class="text-danger">
+                                    {{ form.cat3.errors }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <a href="{% url 'cat_list' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- jQuery & jQuery UI -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script>
+$(function() {
+    $("#student-search").autocomplete({
+        source: "{% url 'student_search' %}",  // AJAX endpoint
+        minLength: 2,
+        select: function(event, ui) {
+            // Fill student ID and name
+            $("#student-id").val(ui.item.id);  // Save student ID
+            $("#student-name").val(ui.item.name);  // Display student name
+
+            // Fetch class_of_study via AJAX after selecting student
+            $.ajax({
+                url: "{% url 'get_class_of_study' %}",
+                data: {
+                    'student_id': ui.item.id
+                },
+                dataType: 'json',
+                success: function (data) {
+                    $("#class_of_study").val(data.class_of_study);  // Set Class of Study
+                }
+            });
+        }
+    });
+});
+</script>
+
+{% endblock %}

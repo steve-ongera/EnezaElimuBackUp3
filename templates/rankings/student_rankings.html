@@ -1,0 +1,152 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <div class="pagetitle mb-6">
+        <h1 class="text-2xl font-bold">Student Rankings per specific  class</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+                <li class="breadcrumb-item active">Student Rankings</li>
+            </ol>
+        </nav>
+    </div>
+
+
+    
+    <!-- Filter Form -->
+<!-- Filter Form -->
+<form method="get" class="mb-4 p-4 bg-light rounded shadow-sm">
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <label for="year" class="form-label">Year:</label>
+            <select name="year" id="year" class="form-select">
+                {% for year in available_years %}
+                    <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                        {{ year }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <label for="term" class="form-label">Term:</label>
+            <select name="term" id="term" class="form-select">
+                <option value="">All Terms</option>
+                {% for term in available_terms %}
+                    <option value="{{ term }}" {% if term == selected_term %}selected{% endif %}>
+                        {{ term }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <label for="class" class="form-label">Class:</label>
+            <select name="class" id="class" class="form-select">
+                <option value="">All Classes</option>
+                {% for class in available_classes %}
+                    <option value="{{ class.id }}" {% if class.id|stringformat:"s" == selected_class %}selected{% endif %}>
+                        {{ class.name }} - {{ class.stream }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-3 mb-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                Filter
+            </button>
+        </div>
+    </div>
+</form>
+    
+    <!-- Rankings Display -->
+    {% for term_ranking in rankings %}
+    <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4">{{ term_ranking.term }}</h2>
+        
+        <div class="overflow-x-auto shadow">
+            <table class="min-w-full bg-white border border-gray-300 table-fixed">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <!-- Fixed columns -->
+                        <th class="sticky left-0 z-10 bg-gray-100 px-4 py-2 border min-w-[60px]">Rank</th>
+                        <th class="sticky left-[60px] z-10 bg-gray-100 px-4 py-2 border min-w-[120px]">Adm No.</th>
+                        <th class="sticky left-[180px] z-10 bg-gray-100 px-4 py-2 border min-w-[200px]">Name</th>
+                        <th class="px-4 py-2 border min-w-[100px]">Average</th>
+                        <th class="px-4 py-2 border min-w-[80px]">GPA</th>
+                        <th class="px-4 py-2 border min-w-[80px]">Grade</th>
+                        
+                        <!-- Dynamic subject columns -->
+                        {% with first_student=term_ranking.students.0 %}
+                            {% for cat in first_student.subjects %}
+                                <th class="px-4 py-2 border min-w-[120px] whitespace-nowrap">
+                                    {{ cat.subject.name }}
+                                    <div class="text-xs font-normal">Score (Grade)</div>
+                                </th>
+                            {% endfor %}
+                        {% endwith %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in term_ranking.students %}
+                    <tr class="{% cycle 'bg-white' 'bg-gray-50' %}">
+                        <!-- Fixed columns -->
+                        <td class="sticky left-0 z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-4 py-2 border text-center">
+                            {{ student.rank }}
+                        </td>
+                        <td class="sticky left-[60px] z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-4 py-2 border">
+                            {{ student.student.admission_number }}
+                        </td>
+                        <td class="sticky left-[180px] z-10 {% cycle 'bg-white' 'bg-gray-50' %} px-4 py-2 border">
+                            {{ student.student.name }}
+                        </td>
+                        <td class="px-4 py-2 border text-center">{{ student.average_score }}%</td>
+                        <td class="px-4 py-2 border text-center">{{ student.grade_point_average }}</td>
+                        <td class="px-4 py-2 border text-center">{{ student.overall_grade }}</td>
+                        
+                        <!-- Dynamic subject columns -->
+                        {% for cat in student.subjects %}
+                            <td class="px-4 py-2 border text-center whitespace-nowrap">
+                                {{ cat.end_term }}% ({{ cat.letter_grade }})
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-8">
+        <p class="text-gray-500">No rankings available for the selected filters.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .table-fixed {
+        table-layout: fixed;
+    }
+    
+    /* Custom scrollbar styles for better visibility */
+    .overflow-x-auto {
+        scrollbar-width: thin;
+        scrollbar-color: #CBD5E0 #EDF2F7;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-track {
+        background: #EDF2F7;
+    }
+    
+    .overflow-x-auto::-webkit-scrollbar-thumb {
+        background-color: #CBD5E0;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}

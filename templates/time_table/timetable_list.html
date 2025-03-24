@@ -1,0 +1,81 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>Exam Timetable List</h1>
+    <nav>
+      <ol class="breadcrumb">
+        {% if request.user.is_staff %}
+        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+        {% else %}
+        <li class="breadcrumb-item"><a href="{% url 'student_dashboard' %}">Home</a></li>
+        {% endif %}
+       
+        <li class="breadcrumb-item active">Exam Timetable</li>
+      </ol>
+    </nav>
+</div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">List of Exam Timetables</h5>
+                   
+                    {% if request.user.is_staff %}
+                    <a href="{% url 'create_timetable' %}" class="btn btn-primary mb-3">Create New Timetable</a>
+                    {% else %}
+                    <a href="{% url 'student_dashboard' %}" class="btn btn-primary mb-3">Home</a>
+                    {% endif %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Session</th>
+                                    <th>Exam Date</th>
+                                    <th>Start Time</th>
+                                    <th>Year</th>
+                                    <th>Download PDF</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for timetable in timetables %}
+                                    <tr>
+                                        <td>{{ timetable.session.year }}</td>
+                                        <td>{{ timetable.start_date }}</td>
+                                        <td>{{ timetable.end_date }}</td>
+                                        <td>{{ timetable.name }}</td>
+                                        <td>
+                                          {% if timetable.time_table_pdf %}
+                                              <a href="{{ timetable.time_table_pdf.url }}" class="btn btn-primary" download>Download PDF</a>
+                                          {% else %}
+                                              No PDF available
+                                          {% endif %}
+                                        </td>
+                                        <td>
+
+                                            {% if request.user.is_staff %}
+                                            <!-- View Details Link -->
+                                            <a href="{% url 'exam_timetable_detail' timetable.id %}" class="btn btn-sm btn-info">View Details</a>
+                                            
+                                            <a href="{% url 'update_timetable' timetable.id %}" class="btn btn-sm btn-warning">Edit</a>
+                                            <a href="{% url 'delete_timetable' timetable.id %}" class="btn btn-sm btn-danger">Delete</a>
+                                            {% else %}
+                                           <!-- View Details Link -->
+                                           <a href="{% url 'exam_timetable_detail' timetable.id %}" class="btn btn-sm btn-info">View Details</a>
+                                            {% endif %}
+                                            
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

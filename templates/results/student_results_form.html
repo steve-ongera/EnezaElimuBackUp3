@@ -1,0 +1,101 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+<div class="pagetitle">
+    <h1>Student Results Portal</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item active">Results Portal</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center">📊 Student Results Portal</h5>
+
+                    <!-- Result Search Form -->
+                    <form method="POST" class="row g-3">
+                        {% csrf_token %}
+                        <div class="col-md-12">
+                            <label for="admission_number" class="form-label">Admission Number</label>
+                            <input type="text" class="form-control" name="admission_number" id="admission_number" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="year" class="form-label">Year</label>
+                            <select name="year" id="year" class="form-select" required>
+                                {% for year in "2020"|rjust:"5" %}
+                                    <option value="{{ forloop.counter|add:2019 }}">{{ forloop.counter|add:2019 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="term" class="form-label">Term</label>
+                            <select name="term" id="term" class="form-select" required>
+                                <option value="Term 1">Term 1</option>
+                                <option value="Term 2">Term 2</option>
+                                <option value="Term 3">Term 3</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary w-100">🔍 View Results</button>
+                        </div>
+                    </form>
+
+                    <!-- Results Display -->
+                    {% if show_results %}
+                    <div class="mt-4">
+                        <h6 class="text-center fw-bold">📄 Results for {{ student.name }}</h6>
+                        <p class="text-center text-muted mb-3">Term: <strong>{{ term.name }} {{ term.year }}</strong></p>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>CAT 1</th>
+                                        <th>CAT 2</th>
+                                        <th>CAT 3</th>
+                                        <th>Average</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for result in results %}
+                                    <tr>
+                                        <td>{{ result.subject.name }}</td>
+                                        <td>{{ result.cat1 }}</td>
+                                        <td>{{ result.cat2 }}</td>
+                                        <td>{{ result.cat3 }}</td>
+                                        <td>{{ result.end_term }}</td>
+                                        <td>{{ result.letter_grade }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-4 p-3 bg-light rounded text-center">
+                            <p class="fw-semibold mb-2">📊 Overall Average: <span class="text-primary">{{ overall_average }}%</span></p>
+                            <p class="fw-semibold">🎓 GPA: <span class="text-primary">{{ gpa }}</span></p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
