@@ -1288,20 +1288,29 @@ def cat_create(request):
         if form.is_valid():
             cat = form.save(commit=False)
             student_id = request.POST.get('student')
+            
             if student_id:
                 try:
                     student = Student.objects.get(id=student_id)
                     cat.student = student
-                    # Set class_of_study directly
-                    cat.class_of_study = student.current_class
+                    
+                    # Ensure class_of_study is set only if student has a current_class
+                    if student.current_class:
+                        cat.class_of_study = student.current_class
+                    else:
+                        # Optional: Add a message or handle the case where student has no current class
+                        messages.warning(request, f"Student {student} has no current class assigned.")
                 except Student.DoesNotExist:
-                    pass  # Optionally add an error message here
+                    messages.error(request, "Selected student does not exist.")
+                    return render(request, 'cats/cat_form.html', {'form': form})
+            
             cat.save()
+            messages.success(request, "CAT created successfully.")
             return redirect('cat_create')
     else:
         form = CATForm()
+    
     return render(request, 'cats/cat_form.html', {'form': form})
-
 
 
 @login_required

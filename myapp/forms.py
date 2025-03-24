@@ -151,13 +151,12 @@ class TermForm(forms.ModelForm):
 
 
 
-
-
 class CATForm(forms.ModelForm):
-    class_of_study = forms.CharField(
+    class_of_study = forms.ModelChoiceField(
+        queryset=Student.objects.first().current_class.__class__.objects.all() if Student.objects.exists() else None,
         label='Class of Study',
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'})
+        widget=forms.Select(attrs={'class': 'form-select', 'readonly': 'readonly'})
     )
 
     class Meta:
@@ -172,6 +171,20 @@ class CATForm(forms.ModelForm):
             'cat3': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'CAT 3 Score'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # If a student is selected, pre-populate the class_of_study
+        if 'student' in self.data:
+            student_id = self.data.get('student')
+            if student_id:
+                try:
+                    student = Student.objects.get(id=student_id)
+                    if student.current_class:
+                        self.fields['class_of_study'].initial = student.current_class
+                        self.fields['class_of_study'].widget.attrs['disabled'] = 'disabled'
+                except Student.DoesNotExist:
+                    pass
 
 
 class StudentSearchForm(forms.Form):
