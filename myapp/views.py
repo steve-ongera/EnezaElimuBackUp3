@@ -1165,7 +1165,7 @@ def subject_delete(request, pk):
 
 @login_required
 @user_passes_test(is_staff_user)
-def students_list(request):
+def database_students_list(request):
     students = Student.objects.all()
     return render(request, 'students/database_student_list.html', {'students': students})
 
@@ -1177,7 +1177,8 @@ def student_create(request):
         form = StudentForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('student_list')
+            messages.success(request, "student record created successfully.")
+            return redirect('database_students_list')
     else:
         form = StudentForm()
     return render(request, 'students/student_form.html', {'form': form})

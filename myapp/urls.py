@@ -55,7 +55,7 @@ urlpatterns = [
     path('subjects/<int:pk>/delete/', views.subject_delete, name='subject_delete'),
 
     #students
-    path('list_of_students/', views.students_list, name='students_list'),
+    path('database_students_list/', views.database_students_list, name='database_students_list'),
     path('students/create/', views.student_create, name='student_create'),
     path('students/<int:pk>/', views.student_detail, name='student_detail'),
     path('students/<int:pk>/update/', views.student_update, name='student_update'),
