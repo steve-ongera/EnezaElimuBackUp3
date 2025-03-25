@@ -96,6 +96,15 @@
   }
 </style>
 
+<div class="message-container" id="system-messages">
+    {% for message in messages %}
+    <div class="alert-message alert-{{ message.tags }}">
+        {{ message }}
+        <span class="close-message">&times;</span>
+    </div>
+    {% endfor %}
+  </div>
+
 <div class="enroll-container">
     <div class="enroll-header">
         <h3>Enroll Subjects for {{ current_term.name }} {{ current_term.year }}</h3>
