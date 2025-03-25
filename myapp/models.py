@@ -365,7 +365,8 @@ class Intern(models.Model):
     stipend = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     # Profile Picture
-    profile_image = models.ImageField(upload_to="intern_profiles/", default="profile.png", null=True, blank=True)
+    profile_image = models.ImageField(upload_to="intern_profiles/", default="intern_profiles/profile.png", null=True, blank=True)
+
     
     # Emergency Contact
     emergency_contact_name = models.CharField(max_length=100, null=True, blank=True)

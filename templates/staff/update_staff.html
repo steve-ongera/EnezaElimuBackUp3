@@ -1,7 +1,16 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-  <h2>Edit Staff: {{ form.instance.first_name }} {{ form.instance.last_name }}</h2>
+<div class="pagetitle">
+    <h1>{{ form.instance.first_name }} {{ form.instance.last_name }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'staff_list' %}">Staff</a></li>
+            <li class="breadcrumb-item active">edit  {{ form.instance.last_name }} </li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
 
   <div class="card">
       <div class="card-body">
@@ -10,7 +19,7 @@
               
               <div class="row g-3">
                   <!-- ID Number Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.id_number.id_for_label }}" class="form-label">ID Number</label>
                       {{ form.id_number }}
                       <div class="text-danger">
@@ -19,7 +28,7 @@
                   </div>
 
                   <!-- First Name Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
                       {{ form.first_name }}
                       <div class="text-danger">
@@ -28,7 +37,7 @@
                   </div>
 
                   <!-- Last Name Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
                       {{ form.last_name }}
                       <div class="text-danger">
@@ -37,7 +46,7 @@
                   </div>
 
                   <!-- Email Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
                       {{ form.email }}
                       <div class="text-danger">
@@ -46,7 +55,7 @@
                   </div>
 
                   <!-- Phone Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
                       {{ form.phone }}
                       <div class="text-danger">
@@ -55,7 +64,7 @@
                   </div>
 
                   <!-- Address Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
                       {{ form.address }}
                       <div class="text-danger">
@@ -64,7 +73,7 @@
                   </div>
 
                   <!-- Date of Birth Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Date of Birth</label>
                       {{ form.date_of_birth }}
                       <div class="text-danger">
@@ -73,7 +82,7 @@
                   </div>
 
                   <!-- Gender Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.gender.id_for_label }}" class="form-label">Gender</label>
                       {{ form.gender }}
                       <div class="text-danger">
@@ -82,7 +91,7 @@
                   </div>
 
                   <!-- Nationality Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.nationality.id_for_label }}" class="form-label">Nationality</label>
                       {{ form.nationality }}
                       <div class="text-danger">
@@ -91,7 +100,7 @@
                   </div>
 
                   <!-- Department Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.department.id_for_label }}" class="form-label">Department</label>
                       {{ form.department }}
                       <div class="text-danger">
@@ -100,7 +109,7 @@
                   </div>
 
                   <!-- Position Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.position.id_for_label }}" class="form-label">Position</label>
                       {{ form.position }}
                       <div class="text-danger">
@@ -109,7 +118,7 @@
                   </div>
 
                   <!-- Employment Date Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.employment_date.id_for_label }}" class="form-label">Employment Date</label>
                       {{ form.employment_date }}
                       <div class="text-danger">
@@ -118,7 +127,7 @@
                   </div>
 
                   <!-- Salary Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.salary.id_for_label }}" class="form-label">Salary</label>
                       {{ form.salary }}
                       <div class="text-danger">
@@ -127,7 +136,7 @@
                   </div>
 
                   <!-- Status Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.status.id_for_label }}" class="form-label">Status</label>
                       {{ form.status }}
                       <div class="text-danger">
@@ -136,7 +145,7 @@
                   </div>
 
                   <!-- Profile Image Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.profile_image.id_for_label }}" class="form-label">Profile Image</label>
                       {{ form.profile_image }}
                       <div class="text-danger">
@@ -145,7 +154,7 @@
                   </div>
 
                   <!-- Emergency Contact Name Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.emergency_contact_name.id_for_label }}" class="form-label">Emergency Contact Name</label>
                       {{ form.emergency_contact_name }}
                       <div class="text-danger">
@@ -154,7 +163,7 @@
                   </div>
 
                   <!-- Emergency Contact Phone Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.emergency_contact_phone.id_for_label }}" class="form-label">Emergency Contact Phone</label>
                       {{ form.emergency_contact_phone }}
                       <div class="text-danger">
@@ -163,7 +172,7 @@
                   </div>
 
                   <!-- Emergency Contact Relationship Field -->
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                       <label for="{{ form.emergency_contact_relationship.id_for_label }}" class="form-label">Emergency Contact Relationship</label>
                       {{ form.emergency_contact_relationship }}
                       <div class="text-danger">

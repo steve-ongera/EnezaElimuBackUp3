@@ -2,6 +2,16 @@
 
 {% block content %}
 
+<div class="message-container" id="system-messages">
+    {% for message in messages %}
+    <div class="alert-message alert-{{ message.tags }}">
+        {{ message }}
+        <span class="close-message">&times;</span>
+    </div>
+    {% endfor %}
+  </div>
+
+
 <div class="pagetitle">
     <h1>Interns</h1>
     <nav>
@@ -29,7 +39,6 @@
                                     <th>Department</th>
                                     <th>Phone</th>
                                     <th>Email</th>
-                                    <th>Supervisor</th>
                                     <th>Internship Period</th>
                                     <th>Edit</th>
                                     <th>Delete</th>
@@ -46,8 +55,7 @@
                                     <td>{{ intern.department }}</td>
                                     <td>{{ intern.phone }}</td>
                                     <td>{{ intern.email }}</td>
-                                    <td>{{ intern.supervisor }}</td>
-                                    <td>{{ intern.start_date }} - {{ intern.end_date }}</td>
+                                    <td>{{ intern.start_date|date:"d/m/Y" }} - {{ intern.end_date|date:"d/m/Y" }}</td>                                    </td>
                                     <td><a href="{% url 'update_intern' intern.pk %}">Edit</a></td>
                                     <td><a href="{% url 'delete_intern' intern.pk %}">Delete</a></td>
                                 </tr>

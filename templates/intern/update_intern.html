@@ -1,156 +1,163 @@
-{% extends 'base/base.html' %}
-
+{% extends 'base/base.html'%}
 {% block content %}
-  <h2>{% if form.instance.id %}Edit{% else %}Add{% endif %} Intern</h2>
 
-  <div class="card">
-      <div class="card-body">
-          <form method="POST" enctype="multipart/form-data">
-              {% csrf_token %}
-              
-              <div class="row g-3">
-                  <!-- ID Number Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.id_number.id_for_label }}" class="form-label">ID Number</label>
-                      {{ form.id_number }}
-                      <div class="text-danger">
-                          {{ form.id_number.errors }}
-                      </div>
-                  </div>
+<div class="pagetitle">
+    <h1>{% if form.instance.id %}Edit{% else %}Add{% endif %} Intern</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'intern_list' %}">Interns</a></li>
+            <li class="breadcrumb-item active">{% if form.instance.id %}Edit{% else %}Add{% endif %} Intern</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
 
-                  <!-- First Name Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
-                      {{ form.first_name }}
-                      <div class="text-danger">
-                          {{ form.first_name.errors }}
-                      </div>
-                  </div>
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row g-3">
+                            <!-- ID Number -->
+                            <div class="col-md-4">
+                                <label for="{{ form.id_number.id_for_label }}" class="form-label">ID Number</label>
+                                {{ form.id_number }}
+                                <div class="text-danger">{{ form.id_number.errors }}</div>
+                            </div>
 
-                  <!-- Last Name Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
-                      {{ form.last_name }}
-                      <div class="text-danger">
-                          {{ form.last_name.errors }}
-                      </div>
-                  </div>
+                            <!-- First Name -->
+                            <div class="col-md-4">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                {{ form.first_name }}
+                                <div class="text-danger">{{ form.first_name.errors }}</div>
+                            </div>
 
-                  <!-- Email Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
-                      {{ form.email }}
-                      <div class="text-danger">
-                          {{ form.email.errors }}
-                      </div>
-                  </div>
+                            <!-- Last Name -->
+                            <div class="col-md-4">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                {{ form.last_name }}
+                                <div class="text-danger">{{ form.last_name.errors }}</div>
+                            </div>
 
-                  <!-- Phone Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
-                      {{ form.phone }}
-                      <div class="text-danger">
-                          {{ form.phone.errors }}
-                      </div>
-                  </div>
+                            <!-- Email -->
+                            <div class="col-md-4">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                                {{ form.email }}
+                                <div class="text-danger">{{ form.email.errors }}</div>
+                            </div>
 
-                  <!-- Address Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
-                      {{ form.address }}
-                      <div class="text-danger">
-                          {{ form.address.errors }}
-                      </div>
-                  </div>
+                            <!-- Phone -->
+                            <div class="col-md-4">
+                                <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
+                                {{ form.phone }}
+                                <div class="text-danger">{{ form.phone.errors }}</div>
+                            </div>
 
-                  <!-- Date of Birth Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Date of Birth</label>
-                      {{ form.date_of_birth }}
-                      <div class="text-danger">
-                          {{ form.date_of_birth.errors }}
-                      </div>
-                  </div>
+                            <!-- Address -->
+                            <div class="col-md-4">
+                                <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+                                {{ form.address }}
+                                <div class="text-danger">{{ form.address.errors }}</div>
+                            </div>
 
-                  <!-- Gender Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.gender.id_for_label }}" class="form-label">Gender</label>
-                      {{ form.gender }}
-                      <div class="text-danger">
-                          {{ form.gender.errors }}
-                      </div>
-                  </div>
+                            <!-- Profile Image -->
+                            <div class="col-md-3">
+                                <label for="{{ form.profile_image.id_for_label }}" class="form-label">Profile Image</label>
+                                {{ form.profile_image }}
+                                <div class="text-danger">{{ form.profile_image.errors }}</div>
+                            </div>
 
-                  <!-- Nationality Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.nationality.id_for_label }}" class="form-label">Nationality</label>
-                      {{ form.nationality }}
-                      <div class="text-danger">
-                          {{ form.nationality.errors }}
-                      </div>
-                  </div>
+                            <!-- Date of Birth -->
+                            <div class="col-md-3">
+                                <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Date of Birth</label>
+                                {{ form.date_of_birth }}
+                                <div class="text-danger">{{ form.date_of_birth.errors }}</div>
+                            </div>
 
-                  <!-- Department Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.department.id_for_label }}" class="form-label">Department</label>
-                      {{ form.department }}
-                      <div class="text-danger">
-                          {{ form.department.errors }}
-                      </div>
-                  </div>
+                            <!-- Gender -->
+                            <div class="col-md-3">
+                                <label for="{{ form.gender.id_for_label }}" class="form-label">Gender</label>
+                                {{ form.gender }}
+                                <div class="text-danger">{{ form.gender.errors }}</div>
+                            </div>
 
-                  <!-- Position Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.position.id_for_label }}" class="form-label">Position</label>
-                      {{ form.position }}
-                      <div class="text-danger">
-                          {{ form.position.errors }}
-                      </div>
-                  </div>
+                            <!-- Nationality -->
+                            <div class="col-md-3">
+                                <label for="{{ form.nationality.id_for_label }}" class="form-label">Nationality</label>
+                                {{ form.nationality }}
+                                <div class="text-danger">{{ form.nationality.errors }}</div>
+                            </div>
 
-                  <!-- Profile Image Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.profile_image.id_for_label }}" class="form-label">Profile Image</label>
-                      {{ form.profile_image }}
-                      <div class="text-danger">
-                          {{ form.profile_image.errors }}
-                      </div>
-                  </div>
+                            <!-- Department -->
+                            <div class="col-md-4">
+                                <label for="{{ form.department.id_for_label }}" class="form-label">Department</label>
+                                {{ form.department }}
+                                <div class="text-danger">{{ form.department.errors }}</div>
+                            </div>
 
-                  <!-- Emergency Contact Name Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.emergency_contact_name.id_for_label }}" class="form-label">Emergency Contact Name</label>
-                      {{ form.emergency_contact_name }}
-                      <div class="text-danger">
-                          {{ form.emergency_contact_name.errors }}
-                      </div>
-                  </div>
+                            <!-- Position -->
+                            <div class="col-md-4">
+                                <label for="{{ form.position.id_for_label }}" class="form-label">Position</label>
+                                {{ form.position }}
+                                <div class="text-danger">{{ form.position.errors }}</div>
+                            </div>
 
-                  <!-- Emergency Contact Phone Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.emergency_contact_phone.id_for_label }}" class="form-label">Emergency Contact Phone</label>
-                      {{ form.emergency_contact_phone }}
-                      <div class="text-danger">
-                          {{ form.emergency_contact_phone.errors }}
-                      </div>
-                  </div>
+                            <!-- Start Date -->
+                            <div class="col-md-4">
+                                <label for="{{ form.start_date.id_for_label }}" class="form-label">Start Date</label>
+                                {{ form.start_date }}
+                                <div class="text-danger">{{ form.start_date.errors }}</div>
+                            </div>
 
-                  <!-- Emergency Contact Relationship Field -->
-                  <div class="col-md-6">
-                      <label for="{{ form.emergency_contact_relationship.id_for_label }}" class="form-label">Emergency Contact Relationship</label>
-                      {{ form.emergency_contact_relationship }}
-                      <div class="text-danger">
-                          {{ form.emergency_contact_relationship.errors }}
-                      </div>
-                  </div>
-              </div>
+                            <!-- End Date -->
+                            <div class="col-md-4">
+                                <label for="{{ form.end_date.id_for_label }}" class="form-label">End Date</label>
+                                {{ form.end_date }}
+                                <div class="text-danger">{{ form.end_date.errors }}</div>
+                            </div>
 
-              <!-- Form Submit and Reset Buttons -->
-              <div class="text-center mt-3">
-                  <button type="submit" class="btn btn-primary">Save</button>
-                  <button type="reset" class="btn btn-secondary">Reset</button>
-              </div>
-          </form>
-      </div>
-  </div>
+                            <!-- Stipend -->
+                            <div class="col-md-4">
+                                <label for="{{ form.stipend.id_for_label }}" class="form-label">Stipend</label>
+                                {{ form.stipend }}
+                                <div class="text-danger">{{ form.stipend.errors }}</div>
+                            </div>
+
+                            <!-- Emergency Contact Name -->
+                            <div class="col-md-4">
+                                <label for="{{ form.emergency_contact_name.id_for_label }}" class="form-label">Emergency Contact Name</label>
+                                {{ form.emergency_contact_name }}
+                                <div class="text-danger">{{ form.emergency_contact_name.errors }}</div>
+                            </div>
+
+                            <!-- Emergency Contact Phone -->
+                            <div class="col-md-4">
+                                <label for="{{ form.emergency_contact_phone.id_for_label }}" class="form-label">Emergency Contact Phone</label>
+                                {{ form.emergency_contact_phone }}
+                                <div class="text-danger">{{ form.emergency_contact_phone.errors }}</div>
+                            </div>
+
+                            <!-- Emergency Contact Relationship -->
+                            <div class="col-md-4">
+                                <label for="{{ form.emergency_contact_relationship.id_for_label }}" class="form-label">Emergency Contact Relationship</label>
+                                {{ form.emergency_contact_relationship }}
+                                <div class="text-danger">{{ form.emergency_contact_relationship.errors }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Form Submit and Reset Buttons -->
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>    
+
 {% endblock %}

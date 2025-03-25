@@ -1,5 +1,93 @@
-<h2>{{ intern.first_name }} {{ intern.last_name }}</h2>
-<p>Email: {{ intern.email }}</p>
-<p>Phone: {{ intern.phone }}</p>
-<p>Position: {{ intern.position }}</p>
-<img src="{{ intern.profile_image.url }}" alt="{{ intern.first_name }}'s profile image">
+
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pagetitle">
+    <h1>{{ intern.first_name }} {{ intern.last_name }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'intern_list' %}">Interns</a></li>
+            <li class="breadcrumb-item active">{{ intern.first_name }} {{ intern.last_name }}</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<div class="card">
+   <div class="card-body">
+       <div class="row">
+           <div class="col-md-4">
+               {% if intern.profile_image %}
+                   <img src="{{ intern.profile_image.url }}"  alt="Profile Picture"  class="img-fluid rounded">
+                {% else %}
+                   <img src="{% static 'media/profile.png'%}" alt="Profile Picture" class="img-fluid rounded">   
+               {% endif %}
+           </div>
+           <div class="col-md-8">
+               <h2 class="card-title mb-4"> {{ intern.first_name }} {{ intern.last_name }}</h2>
+               
+               <div class="row mb-3">
+                   <div class="col-md-6">
+                       <h6 class="text-muted">Gender</h6>
+                       <p>{{ intern.gender }}</p>
+                   </div>
+                   <div class="col-md-6">
+                       <h6 class="text-muted">Phone</h6>
+                       <p>{{ intern.phone }}</p>
+                   </div>
+               </div>
+
+               <div class="row mb-3">
+                   <div class="col-md-6">
+                       <h6 class="text-muted">Department</h6>
+                       <p>{{ intern.department }}</p>
+                   </div>
+                   <div class="col-md-6">
+                       <h6 class="text-muted">Email</h6>
+                       <p>{{ intern.email }}</p>
+                   </div>
+               </div>
+
+               <div class="row mb-4">
+                   <div class="col-md-6">
+                       <h6 class="text-muted">Position</h6>
+                       <p>{{ intern.position }}</p>
+                   </div>
+                   {% if request.user.is_staff %}
+                   <div class="col-md-6">ID Number / Unicode</h6>
+                       <p>{{ intern.id_number }} 
+                        
+                       </p>
+                   </div>
+                   {% endif %}
+               </div>
+
+                
+              
+               
+
+                {% if request.user.is_staff %}
+                <div class="mt-4">
+                    <a href="{% url 'update_intern' intern.id %}" class="btn btn-primary me-2">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+
+                    <a href="{% url 'delete_intern' intern.id %}" class="btn btn-danger me-2">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+
+
+                   <a href="{% url 'intern_list'%}" class="btn btn-secondary">
+                       <i class="bi bi-arrow-left"></i> Back to List
+                   </a>
+               </div>
+
+               {% endif %}
+           </div>
+       </div>
+   </div>
+</div>
+
+{% endblock %}
+

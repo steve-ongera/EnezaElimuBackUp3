@@ -342,7 +342,7 @@ class InternForm(forms.ModelForm):
             'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'gender': forms.Select(attrs={'class': 'form-select'}),
             'nationality': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nationality'}),
-            'department': forms.Select(attrs={'class': 'form-select'}),
+            'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Department'}),
             'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Position'}),
             'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),

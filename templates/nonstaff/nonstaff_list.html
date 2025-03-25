@@ -1,6 +1,14 @@
 {% extends "base/base.html" %}
 
 {% block content %}
+<div class="message-container" id="system-messages">
+    {% for message in messages %}
+    <div class="alert-message alert-{{ message.tags }}">
+        {{ message }}
+        <span class="close-message">&times;</span>
+    </div>
+    {% endfor %}
+</div>
 
 <div class="pagetitle">
     <h1>Non-Staff Members</h1>
@@ -28,8 +36,7 @@
                                     <th>Name</th>
                                     <th>Role</th>
                                     <th>Phone</th>
-                                    <th>Email</th>
-                                    <th>Department</th>
+                                    <th>Nationality</th>
                                     <th>Edit</th>
                                     <th>Delete</th>
                                 </tr>
@@ -44,8 +51,7 @@
                                     </td>
                                     <td>{{ nonstaff.role }}</td>
                                     <td>{{ nonstaff.phone }}</td>
-                                    <td>{{ nonstaff.email }}</td>
-                                    <td>{{ nonstaff.department }}</td>
+                                    <td>{{ nonstaff.nationality}}</td>
                                     <td><a href="{% url 'update_nonstaff' nonstaff.pk %}">Edit</a></td>
                                     <td><a href="{% url 'delete_nonstaff' nonstaff.pk %}">Delete</a></td>
                                 </tr>

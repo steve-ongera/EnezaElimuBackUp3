@@ -2013,7 +2013,7 @@ def teacher_create(request):
         form = TeacherForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Teacher added successfully!')
+            messages.success(request, 'Teacher record created  successfully!')
             return redirect('teacher_list')  # Redirect to teacher list page
     else:
         form = TeacherForm()
@@ -2076,6 +2076,7 @@ def create_staff(request):
         form = StaffForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            messages.success(request, "Staff record created successfully.")
             return redirect('staff_list')
     else:
         form = StaffForm()
@@ -2104,6 +2105,7 @@ def update_staff(request, pk):
         form = StaffForm(request.POST, request.FILES, instance=staff_member)
         if form.is_valid():
             form.save()
+            messages.success(request, "staff record updated successfully.")
             return redirect('staff_list')
     else:
         form = StaffForm(instance=staff_member)
@@ -2129,6 +2131,7 @@ def create_nonstaff(request):
         form = NonStaffForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            messages.success(request, "non-staff record created successfully.")
             return redirect('nonstaff_list')
     else:
         form = NonStaffForm()
@@ -2157,6 +2160,7 @@ def update_nonstaff(request, pk):
         form = NonStaffForm(request.POST, request.FILES, instance=nonstaff_member)
         if form.is_valid():
             form.save()
+            messages.success(request, "non-staff record updated successfully.")
             return redirect('nonstaff_list')
     else:
         form = NonStaffForm(instance=nonstaff_member)
@@ -2169,6 +2173,7 @@ def delete_nonstaff(request, pk):
     nonstaff_member = get_object_or_404(NonStaff, pk=pk)
     if request.method == 'POST':
         nonstaff_member.delete()
+        messages.success(request, "non-staff record deleted successfully.")
         return redirect('nonstaff_list')
     return render(request, 'nonstaff/delete_nonstaff.html', {'nonstaff_member': nonstaff_member})
 
@@ -2182,6 +2187,7 @@ def create_intern(request):
         form = InternForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            messages.success(request, "Intern record added successfully.")
             return redirect('intern_list')
     else:
         form = InternForm()
@@ -2209,6 +2215,7 @@ def update_intern(request, pk):
         form = InternForm(request.POST, request.FILES, instance=intern)
         if form.is_valid():
             form.save()
+            messages.success(request, "Intern record updated successfully.")
             return redirect('intern_list')
     else:
         form = InternForm(instance=intern)
@@ -2222,6 +2229,7 @@ def delete_intern(request, pk):
     intern = get_object_or_404(Intern, pk=pk)
     if request.method == 'POST':
         intern.delete()
+        messages.error(request, "Intern record deleted successfully.")
         return redirect('intern_list')
     return render(request, 'intern/delete_intern.html', {'intern': intern})
 
