@@ -5,13 +5,12 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from django.utils import timezone
 from django.conf import settings
-from django.contrib.auth.models import User
-from django.db import models
 import random
 import string
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.core.validators import FileExtensionValidator
 
 class Department(models.Model):
     head_of_department = models.CharField(max_length=100)
@@ -593,3 +592,52 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+
+
+
+class Assignment(models.Model):
+    # Relationship with existing models
+    class_of_study = models.ForeignKey(Class_of_study, on_delete=models.CASCADE, related_name='assignments')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='assignments')
+    term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name='assignments')
+    
+    # Assignment details
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    
+    # File upload with PDF validation
+    assignment_file = models.FileField(
+        upload_to='assignments/%Y/%m/',
+        validators=[FileExtensionValidator(['pdf'])],
+        help_text="Upload assignment PDF (PDF only)"
+    )
+    
+    # Collection and submission dates
+    collection_date = models.DateField()
+    submitted_date = models.DateField(null=True, blank=True)
+    
+    # Status fields
+    is_submitted = models.BooleanField(default=False)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name_plural = "Assignments"
+        unique_together = ['class_of_study', 'subject', 'term', 'title']
+    
+    def __str__(self):
+        return f"{self.title} - {self.subject.name} - {self.term}"
+    
+    @property
+    def is_current_term(self):
+        """Check if this assignment is for the current term"""
+        return self.term.is_current
+    
+    @property
+    def is_overdue(self):
+        """Check if the assignment is overdue"""
+        return not self.is_submitted and timezone.now().date() > self.collection_date

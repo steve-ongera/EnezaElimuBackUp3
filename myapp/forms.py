@@ -439,3 +439,23 @@ class ExamTimeTableForm(forms.ModelForm):
         model = ExamTimeTable
         fields = '__all__'
                
+
+class AssignmentForm(forms.ModelForm):
+    class Meta:
+        model = Assignment
+        fields = [
+            'class_of_study', 
+            'subject', 
+            'title', 
+            'description', 
+            'assignment_file', 
+            'collection_date'
+        ]
+        widgets = {
+            'class_of_study': forms.Select(attrs={'class': 'form-control'}),
+            'subject': forms.Select(attrs={'class': 'form-control'}),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Assignment Title'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Assignment Description', 'rows': 3}),
+            'assignment_file': forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf'}),
+            'collection_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }

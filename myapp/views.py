@@ -2936,3 +2936,49 @@ def promote_students(request):
         return redirect('students_list')  # Replace with your actual view
 
     return render(request, 'students/promote_students.html')
+
+
+@login_required
+@user_passes_test(is_staff_user)
+def create_assignment(request):
+    """View to create a new assignment"""
+    if request.method == 'POST':
+        form = AssignmentForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Get the current term
+            current_term = Term.objects.filter(is_current=True).first()
+            
+            if not current_term:
+                messages.error(request, "No current term is set. Please contact administration.")
+                return render(request, 'assignments/create_assignment.html', {'form': form})
+            
+            # Set the term for the assignment
+            assignment = form.save(commit=False)
+            assignment.term = current_term
+            assignment.save()
+            
+            messages.success(request, 'Assignment created successfully!')
+            return redirect('assignment_list')
+    else:
+        form = AssignmentForm()
+    
+    return render(request, 'assignments/create_assignment.html', {'form': form})
+
+@login_required
+def assignment_list(request):
+    """View to list assignments"""
+    # Get the current term
+    current_term = Term.objects.filter(is_current=True).first()
+    
+    # Get assignments for the current term, highlighting them
+    assignments = Assignment.objects.all()
+    current_term_assignments = assignments.filter(term=current_term)
+    other_term_assignments = assignments.exclude(term=current_term)
+    
+    context = {
+        'current_term_assignments': current_term_assignments,
+        'other_term_assignments': other_term_assignments,
+        'current_term': current_term
+    }
+    
+    return render(request, 'assignments/assignment_list.html', context)

@@ -5,7 +5,11 @@
     <h1>System Settings</h1>
     <nav>
       <ol class="breadcrumb">
+        {% if request.user.is_staff %}
         <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+        {% else %}
+        <li class="breadcrumb-item"><a href="{% url 'student_dashboard' %}">Home</a></li>
+        {% endif %}
         <li class="breadcrumb-item active">System Settings</li>
       </ol>
     </nav>

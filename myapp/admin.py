@@ -162,6 +162,28 @@ class CATAdmin(admin.ModelAdmin):
     formatted_grade_points.short_description = 'Grade Points'
 
 
+@admin.register(Assignment)
+class AssignmentAdmin(admin.ModelAdmin):
+    list_display = (
+        'title', 
+        'subject', 
+        'class_of_study', 
+        'term', 
+        'collection_date', 
+        'is_submitted'
+    )
+    
+    list_filter = (
+        'is_submitted', 
+        'subject', 
+        'class_of_study', 
+        'term'
+    )
+    
+    search_fields = (
+        'title', 
+        'description'
+    )
 
 admin.site.register(Class_of_study)
 admin.site.register(Subject)

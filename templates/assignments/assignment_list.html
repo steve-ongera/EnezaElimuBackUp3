@@ -1,0 +1,150 @@
+
+
+
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="message-container" id="system-messages">
+    {% for message in messages %}
+    <div class="alert-message alert-{{ message.tags }}">
+        {{ message }}
+        <span class="close-message">&times;</span>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="pagetitle">
+    <h1>Assignments</h1>
+    <nav>
+        <ol class="breadcrumb">
+            {% if request.user.is_staff %}
+            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item">
+                {% if current_term %} Current Term: {{ current_term }} {% endif %}
+            </li>
+            <li class="breadcrumb-item active"><a href="{% url 'create_assignment' %}">Create assignment</a></li>
+            {% else %}
+            <li class="breadcrumb-item"><a href="{% url 'student_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item">
+                {% if current_term %} Current Term: {{ current_term }} {% endif %}
+            </li>
+            {% endif %}
+            
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Current Term Assignments</h5>
+                    {% if current_term_assignments %}
+                    <div class="table-responsive">
+                        <table class="table table-striped ">
+                            <thead>
+                                <tr>
+                                    <th>Term</th>
+                                     <th>Subject</th>
+                                     <th>Title</th>
+                                     <th>Class</th>
+                                     <th>Collection Date</th>
+                                     <th>Status</th>
+                                     <th>Actions</th>
+                                 </tr>
+                            </thead>
+                            <tbody>
+                                {% for assignment in current_term_assignments %}
+                                    <tr class="{% if assignment.is_overdue %}table-danger{% endif %}">
+                                        <td>{{ assignment.term }}</td>
+                                        <td>{{ assignment.subject.name }}</td>
+                                        <td>{{ assignment.title }}</td>
+                                        <td>{{ assignment.class_of_study.name }}</td>
+                                        <td>{{ assignment.collection_date }}</td>
+                                        <td>
+                                            {% if assignment.is_submitted %}
+                                                <span class="badge bg-success">Submitted</span>
+                                            {% elif assignment.is_overdue %}
+                                                <span class="badge bg-danger">Overdue</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if assignment.assignment_file %}
+                                                <a href="{{ assignment.assignment_file.url }}" 
+                                                   class="btn btn-sm btn-primary" 
+                                                   download>
+                                                    Download
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted">No file</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- End Table with stripped rows -->
+                    </div>
+                    {% else %}
+                        <div class="alert alert-info">No assignments for the current term.</div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Other Term Assignments</h5>
+                    {% if other_term_assignments %}
+                    <div class="table-responsive">
+                        <table class="table table-striped ">
+                            <thead>
+                                <tr>
+                                    <th>Term</th>
+                                     <th>Subject</th>
+                                     <th>Title</th>
+                                     <th>Class</th>
+                                     <th>Collection Date</th>
+                                     <th>Actions</th>
+                                 </tr>
+                            </thead>
+                            <tbody>
+                                {% for assignment in other_term_assignments %}
+                                   <tr>
+                                    <td>{{ assignment.term }}</td>
+                                    <td>{{ assignment.subject.name }}</td>
+                                    <td>{{ assignment.title }}</td>
+                                    <td>{{ assignment.class_of_study.name }}</td>
+                                    <td>{{ assignment.collection_date }}</td>
+                                    <td>
+                                        {% if assignment.assignment_file %}
+                                            <a href="{{ assignment.assignment_file.url }}" 
+                                               class="btn btn-sm btn-secondary" 
+                                               download>
+                                                Download
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">No file</span>
+                                        {% endif %}
+                                    </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- End Table with stripped rows -->
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">No assignments from other terms.</div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

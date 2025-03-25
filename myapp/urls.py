@@ -36,9 +36,9 @@ urlpatterns = [
 
     path('student_profile/', views.student_profile, name='student_profile'),
     path('student_profile/edit/', views.edit_student_profile, name='edit_student_profile'),
-    path('profile_detail/', views.profile_detail, name='profile_detail'),
+    path('profile_detail/', views.profile_detail, name='profile_detail'),# admin profile view
     path('create-profile/', views.create_profile, name='create_profile'),
-    path('edit-profile/', views.edit_profile, name='edit_profile'),
+    path('edit-profile/', views.edit_profile, name='edit_profile'),#admin profile edits
 
     #classs list view
     path('class_lists/', views.class_list, name='class_list'),
@@ -127,11 +127,13 @@ urlpatterns = [
 
 
 
-    #resources views
+    #resources and assignment  views
     path('resources/add/', views.add_resource, name='add_resource'),
     path('resources/', views.resources_list, name='resources_list'),
     path('resources/<int:resource_id>/', views.resource_detail, name='resource_detail'),
     path('resource-search/', views.resource_search, name='resource_search'),
+    path('assignments/', views.assignment_list, name='assignment_list'),
+    path('assignments/create/', views.create_assignment, name='create_assignment'),
 
     #timetable
     path('timetable/', views.timetable_list, name='timetable_list'),

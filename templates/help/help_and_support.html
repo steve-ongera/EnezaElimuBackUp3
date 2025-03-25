@@ -5,7 +5,11 @@
     <h1>Elimu Help and Support</h1>
     <nav>
       <ol class="breadcrumb">
+        {% if request.user.is_staff %}
         <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Home</a></li>
+        {% else %}
+        <li class="breadcrumb-item"><a href="{% url 'student_dashboard' %}">Home</a></li>
+        {% endif %}
         <li class="breadcrumb-item active">Help and Support</li>
       </ol>
     </nav>
@@ -23,12 +27,12 @@
 
             <h6><strong>Frequently Asked Questions (FAQ)</strong></h6>
             <div class="faq-section">
-              <h6><strong>1. How do I access Elimu research reports?</strong></h6>
+              <h6><strong>1. How do I access students exams reports?</strong></h6>
               <p>To access Elimu research reports, follow these steps:
                 <ol>
-                  <li>Go to the "Research Reports" section on the Elimu website.</li>
-                  <li>Click on the "Download Reports" button.</li>
-                  <li>Select the report category you're interested in and click on the report title.</li>
+                  <li>Go to the <b>"Persormance"</b> section on the Elimu website.</li>
+                  <li>Click on the "My results" button.</li>
+                  <li>Select the academic year  you're interested in and click on the report title.</li>
                   <li>Download the PDF of the report by clicking the "Download" button next to the report.</li>
                 </ol>
               </p>
