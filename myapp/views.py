@@ -1332,7 +1332,7 @@ def cat_create(request):
                     return render(request, 'cats/cat_form.html', {'form': form})
             
             cat.save()
-            messages.success(request, "CAT created successfully.")
+            messages.success(request, "The  Exams record has been successfully created.")
             return redirect('cat_create')
     else:
         form = CATForm()
