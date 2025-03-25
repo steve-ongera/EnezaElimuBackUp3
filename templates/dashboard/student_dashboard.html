@@ -78,16 +78,14 @@
   <section class="section dashboard">
     <div class="row">
 
-                {% if messages %}
-                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                          {% for message in messages %}
-                              <h5>{{ message }}</h5>
-                          {% endfor %}
-                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                          </button>
-                      </div>
-                  {% endif %}
+      <div class="message-container" id="system-messages">
+        {% for message in messages %}
+        <div class="alert-message alert-{{ message.tags }}">
+            {{ message }}
+            <span class="close-message">&times;</span>
+        </div>
+        {% endfor %}
+      </div>
 
       <!-- Left side columns -->
       <div class="col-lg-8">

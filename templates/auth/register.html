@@ -54,6 +54,15 @@
 
                 <div class="card-body">
 
+                  <div class="message-container" id="system-messages">
+                    {% for message in messages %}
+                    <div class="alert-message alert-{{ message.tags }}">
+                        {{ message }}
+                        <span class="close-message">&times;</span>
+                    </div>
+                    {% endfor %}
+                  </div>
+
                   {% if form.non_field_errors %}
                   <div class="alert alert-danger">
                     {% for error in form.non_field_errors %}

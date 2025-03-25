@@ -75,6 +75,7 @@ def register(request):
                 )
                 # 5. Log in
                 login(request, user)
+                messages.success(request, f'Registration successful! Welcome {user.first_name}.')
                 return redirect('student_dashboard')
             except Exception as e:
                 form.add_error(None, 'An unexpected error occurred during registration.')
@@ -88,26 +89,53 @@ def register(request):
 
 def custom_login(request):
     if request.method == "POST":
-        admission_number = request.POST['admission_number']
-        password = request.POST['password']
-
+        admission_number = request.POST.get('admission_number', '').strip()
+        password = request.POST.get('password', '').strip()
+        
+        # Input validation
+        if not admission_number or not password:
+            messages.error(request, "Both admission number and password are required.")
+            return render(request, 'auth/login.html', {'admission_number': admission_number})
+        
         user = authenticate(request, username=admission_number, password=password)
 
         if user is not None:
-            login(request, user)
-            next_url = request.GET.get('next') or request.POST.get('next')
-
-            messages.success(request, "You have logged in successfully.")
-            if user.is_staff:
-                return redirect(next_url if next_url else 'admin_dashboard')
+            if user.is_active:
+                login(request, user)
+                next_url = request.POST.get('next') or request.GET.get('next')
+                
+                # Success message with username
+                messages.success(
+                    request, 
+                    f"Welcome back, {user.get_full_name() or user.username}! You've logged in successfully."
+                )
+                
+                # Secure next URL validation
+                from urllib.parse import urlparse
+                if next_url:
+                    netloc = urlparse(next_url).netloc
+                    if netloc and netloc != request.get_host():
+                        next_url = None
+                
+                # Redirect logic
+                if user.is_staff:
+                    return redirect(next_url or 'admin_dashboard')
+                return redirect(next_url or 'student_dashboard')
             else:
-                return redirect(next_url if next_url else 'student_dashboard')
+                messages.error(request, "This account is inactive.")
         else:
-            # Instead of redirecting, render the template with the error
-            context = {'error_message': "Invalid admission number or password."}
-            return render(request, 'auth/login.html', context)
+            messages.error(request, "Invalid admission number or password.")
+        
+        # Return with preserved form input on error
+        return render(request, 'auth/login.html', {
+            'admission_number': admission_number,
+            'next': request.POST.get('next', '')
+        })
 
-    return render(request, 'auth/login.html')
+    # GET request - show login form
+    return render(request, 'auth/login.html', {
+        'next': request.GET.get('next', '')
+    })
 
 
 
@@ -337,8 +365,7 @@ def student_dashboard(request):
 
     
     
-    return render(request, 'auth/dashboard.html', context)
-
+    return render(request, 'dashboard/student_dashboard.html', context)
 
 
 @login_required
