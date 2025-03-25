@@ -43,6 +43,12 @@ MIDDLEWARE += [
     'myapp.middleware.LogRequestMiddleware',
 ]
 
+# settings.py
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"  # or other backend
+SESSION_COOKIE_SECURE = True  # if using HTTPS
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'  # default
+
+
 ROOT_URLCONF = 'EnezaElimu.urls'
 
 TEMPLATES = [
