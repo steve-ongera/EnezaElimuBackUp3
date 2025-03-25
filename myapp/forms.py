@@ -54,6 +54,7 @@ class StudentProfileEditForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = [
+            'profile_image',
             'address',
             'emergency_contact_name',
             'emergency_contact_phone',
@@ -62,6 +63,7 @@ class StudentProfileEditForm(forms.ModelForm):
             'blood_group'
         ]
         widgets = {
+            'profile_image': forms.FileInput(attrs={'class': 'form-control', 'id': 'profileImageInput', 'accept': 'image/*'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Address'}),
             'emergency_contact_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Emergency Contact Name'}),
             'emergency_contact_phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Emergency Contact Phone'}),

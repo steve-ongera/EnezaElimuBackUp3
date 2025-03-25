@@ -1,3 +1,5 @@
+
+
 {% extends "base/base.html" %}
 {% load static %}
 {% block content %}
@@ -13,146 +15,149 @@
 
 <section class="section profile">
   <div class="row">
-    <!-- Profile Image & Basic Info -->
     <div class="col-xl-4">
       <div class="card">
         <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-
-          {% if student.profile_picture %}
-            <img src="{{ student.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded">
+          {% if student.profile_image %}
+            <img src="{{ student.profile_image.url }}" alt="Profile Picture" class="img-fluid rounded-circle" style="max-width: 250px; max-height: 250px; object-fit: cover;">
           {% else %}
-            <img src="{% static 'assets/img/profile.png' %}" alt="Profile Picture" class="img-fluid rounded">   
+            <img src="{% static 'assets/img/profile.png' %}" alt="Profile Picture" class="img-fluid rounded-circle" style="max-width: 250px; max-height: 250px; object-fit: cover;">   
           {% endif %}
-
-          <!-- Edit Profile Icon -->
-          <a href="{% url 'edit_student_profile' %}" class="edit-profile-btn" title="Edit Profile">
-            <i class="bi bi-pencil-square"></i>
-          </a>
-
-          <h2>{{ student.name }}</h2>
-          <h3>{{ student.current_class }}</h3>
-          <p class="text-muted small">Admission No: {{ student.admission_number }}</p>
-
+    
+          <h2 class="mt-3">{{ student.name }} {{student.admission_number}}</h2>
+          <h3>Student : {{ student.current_class}}</h3>
         </div>
       </div>
     </div>
 
-    <!-- Profile Tabs -->
     <div class="col-xl-8">
       <div class="card">
         <div class="card-body pt-3">
-
-          <!-- Tabs Navigation -->
+          <!-- Bordered Tabs -->
           <ul class="nav nav-tabs nav-tabs-bordered">
             <li class="nav-item">
               <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
             </li>
             <li class="nav-item">
-              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#parent-info">Parent Info</button>
-            </li>
-            <li class="nav-item">
-              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#emergency-info">Emergency Contact</button>
-            </li>
-            <li class="nav-item">
-              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#medical-info">Medical Info</button>
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
             </li>
           </ul>
-
-          <!-- Tabs Content -->
           <div class="tab-content pt-2">
 
-            <!-- Overview -->
             <div class="tab-pane fade show active profile-overview" id="profile-overview">
-              <h5 class="card-title">Personal Information</h5>
+              <h5 class="card-title">Profile Details</h5>
+
               <div class="row">
-                <div class="col-lg-4 label">Full Name</div>
-                <div class="col-lg-8">{{ student.name }}</div>
+                <div class="col-lg-3 col-md-4 label">Address</div>
+                <div class="col-lg-9 col-md-8">{{ student.address }}</div>
               </div>
 
               <div class="row">
-                <div class="col-lg-4 label">Admission Number</div>
-                <div class="col-lg-8">{{ student.admission_number }}</div>
+                <div class="col-lg-3 col-md-4 label">Emergency Contact Name</div>
+                <div class="col-lg-9 col-md-8">{{ student.emergency_contact_name }}</div>
               </div>
 
               <div class="row">
-                <div class="col-lg-4 label">Class</div>
-                <div class="col-lg-8">{{ student.current_class }}</div>
+                <div class="col-lg-3 col-md-4 label">Emergency Contact Phone</div>
+                <div class="col-lg-9 col-md-8">{{ student.emergency_contact_phone }}</div>
               </div>
 
               <div class="row">
-                <div class="col-lg-4 label">Date of Birth</div>
-                <div class="col-lg-8">{{ student.date_of_birth }}</div>
+                <div class="col-lg-3 col-md-4 label">Emergency Contact Relationship</div>
+                <div class="col-lg-9 col-md-8">{{ student.emergency_contact_relationship }}</div>
               </div>
 
               <div class="row">
-                <div class="col-lg-4 label">Age</div>
-                <div class="col-lg-8">{{ student.get_age }} years</div>
+                <div class="col-lg-3 col-md-4 label">Medical Conditions</div>
+                <div class="col-lg-9 col-md-8">{{ student.medical_conditions }}</div>
               </div>
 
               <div class="row">
-                <div class="col-lg-4 label">Address</div>
-                <div class="col-lg-8">{{ student.address|default:"Not provided" }}</div>
+                <div class="col-lg-3 col-md-4 label">Blood Group</div>
+                <div class="col-lg-9 col-md-8">{{ student.blood_group }}</div>
               </div>
             </div>
 
-            <!-- Parent Info -->
-            <div class="tab-pane fade pt-3" id="parent-info">
-              <h5 class="card-title">Parent Information</h5>
-              <div class="row">
-                <div class="col-lg-4 label">Father's Name</div>
-                <div class="col-lg-8">{{ student.father_name|default:"Not provided" }}</div>
-              </div>
-              <div class="row">
-                <div class="col-lg-4 label">Father's Phone</div>
-                <div class="col-lg-8">{{ student.father_phone|default:"Not provided" }}</div>
-              </div>
-              <div class="row">
-                <div class="col-lg-4 label">Mother's Name</div>
-                <div class="col-lg-8">{{ student.mother_name|default:"Not provided" }}</div>
-              </div>
-              <div class="row">
-                <div class="col-lg-4 label">Mother's Phone</div>
-                <div class="col-lg-8">{{ student.mother_phone|default:"Not provided" }}</div>
-              </div>
+            <!-- Edit Profile Section -->
+            <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+              <!-- Profile Edit Form -->
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <label for="profile_image" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+                  <div class="col-md-8 col-lg-9">
+                    {% if student.profile_image %}
+                      <img src="{{ student.profile_image.url }}" alt="Profile" class="img-fluid mb-2">
+                    {% endif %}
+                    <div class="pt-2">
+                      <!-- Upload Button -->
+                      <label for="id_profile_image" class="btn btn-primary btn-sm" title="Upload new profile image">
+                        <i class="bi bi-upload"></i> Upload
+                        {{ form.profile_image }}
+                      </label>
+                      
+                      {% if student.profile_image %}
+                        <!-- Remove Button (only show if image exists) -->
+                        <button type="submit" name="remove_profile_image" class="btn btn-danger btn-sm" title="Remove profile image">
+                          <i class="bi bi-trash"></i> Remove
+                        </button>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                {% for field in form %}
+                  {% if field.name != 'profile_image' %}
+                    <div class="row mb-3">
+                      <label for="{{ field.id_for_label }}" class="col-md-4 col-lg-3 col-form-label">
+                        {{ field.label }}
+                      </label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ field }}
+                        {% if field.errors %}
+                          <div class="text-danger">
+                            {{ field.errors }}
+                          </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+              </form>
             </div>
 
-            <!-- Emergency Contact -->
-            <div class="tab-pane fade pt-3" id="emergency-info">
-              <h5 class="card-title">Emergency Contact</h5>
-              <div class="row">
-                <div class="col-lg-4 label">Name</div>
-                <div class="col-lg-8">{{ student.emergency_contact_name|default:"Not provided" }}</div>
-              </div>
-              <div class="row">
-                <div class="col-lg-4 label">Phone</div>
-                <div class="col-lg-8">{{ student.emergency_contact_phone|default:"Not provided" }}</div>
-              </div>
-              <div class="row">
-                <div class="col-lg-4 label">Relationship</div>
-                <div class="col-lg-8">{{ student.emergency_contact_relationship|default:"Not provided" }}</div>
-              </div>
-            </div>
-
-            <!-- Medical Info -->
-            <div class="tab-pane fade pt-3" id="medical-info">
-              <h5 class="card-title">Medical Information</h5>
-              <div class="row">
-                <div class="col-lg-4 label">Blood Group</div>
-                <div class="col-lg-8">{{ student.blood_group|default:"Not provided" }}</div>
-              </div>
-              <div class="row">
-                <div class="col-lg-4 label">Medical Conditions</div>
-                <div class="col-lg-8">{{ student.medical_conditions|default:"None reported" }}</div>
-              </div>
-            </div>
-
-          </div><!-- End Tab Content -->
-
+          </div>
         </div>
       </div>
     </div>
-
   </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Hide the default file input
+  const fileInput = document.getElementById('id_profile_image');
+  fileInput.style.display = 'none';
+
+  // Optional: Preview image before upload
+  fileInput.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.querySelector('.img-fluid');
+        if (preview) {
+          preview.src = e.target.result;
+        }
+      }
+      reader.readAsDataURL(file);
+    }
+  });
+});
+</script>
 
 {% endblock %}

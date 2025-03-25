@@ -1027,13 +1027,31 @@ def subject_analysis(request, class_id, term_id):
 
 @login_required
 def student_profile(request):
-    """View for students to see their profile"""
-    # Assuming student is linked to user via admission number or some other field
+    """View for students to see and edit their profile"""
+    # Get the student associated with the logged-in user
     student = get_object_or_404(Student, admission_number=request.user.username)
     
+    # Handle profile edit form submission
+    if request.method == 'POST':
+        form = StudentProfileEditForm(request.POST, request.FILES, instance=student)
+        if form.is_valid():
+            # Handle profile image removal
+            if 'remove_profile_image' in request.POST:
+                student.profile_image.delete()
+            
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('student_profile')
+    else:
+        # Initialize the form with the student's current data
+        form = StudentProfileEditForm(instance=student)
+    
+    # Prepare context for the template
     context = {
-        'student': student
+        'student': student,
+        'form': form
     }
+    
     return render(request, 'students/profile.html', context)
 
 @login_required
